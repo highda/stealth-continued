@@ -44,8 +44,8 @@
         app:title="@string/preference_category_data">
 
         <Preference
-            app:key="reddit_source"
-            app:title="@string/preference_reddit_source"
+            app:key="teddit_api"
+            app:title="@string/preference_teddit_api"
             app:persistent="false"/>
 
         <Preference
@@ -67,11 +67,6 @@
         <Preference
             app:key="about"
             app:title="@string/preference_about"
-            app:persistent="false"/>
-
-        <Preference
-            app:key="policy_disclaimer"
-            app:title="@string/preference_policy_disclaimer"
             app:persistent="false"/>
 
     </PreferenceCategory>

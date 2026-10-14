@@ -9,7 +9,6 @@ import com.cosmos.unreddit.data.model.MediaType
 import com.cosmos.unreddit.data.model.Resource
 import com.cosmos.unreddit.data.model.Sort
 import com.cosmos.unreddit.data.model.Sorting
-import com.cosmos.unreddit.data.repository.GfycatRepository
 import com.cosmos.unreddit.data.repository.ImgurRepository
 import com.cosmos.unreddit.data.repository.PostListRepository
 import com.cosmos.unreddit.data.repository.PreferencesRepository
@@ -44,7 +43,6 @@ class MediaViewerViewModel
 @Inject constructor(
     private val imgurRepository: ImgurRepository,
     private val streamableRepository: StreamableRepository,
-    private val gfycatRepository: GfycatRepository,
     private val redgifsRepository: RedgifsRepository,
     private val postListRepository: PostListRepository,
     private val postMapper: PostMapper2,
@@ -102,25 +100,8 @@ class MediaViewerViewModel
                     GalleryMedia.singleton(Type.VIDEO, link, LinkUtil.getRedditSoundTrack(link))
                 )
             }
-            MediaType.GFYCAT -> {
-                val id = LinkUtil.getGfycatId(link)
-
-                gfycatRepository.getGfycatGif(id)
-                    .onStart {
-                        _media.value = Resource.Loading()
-                    }
-                    .catch {
-                        catchError(it)
-                    }
-                    .map {
-                        GalleryMedia.singleton(Type.VIDEO, it.gfyItem.contentUrls.mp4.url)
-                    }
-                    .collect {
-                        setMedia(it)
-                    }
-            }
             MediaType.REDGIFS -> {
-                val id = LinkUtil.getGfycatId(link)
+                val id = LinkUtil.getRedgifsId(link)
 
                 redgifsRepository.getRedgifsGif(id)
                     .onStart {

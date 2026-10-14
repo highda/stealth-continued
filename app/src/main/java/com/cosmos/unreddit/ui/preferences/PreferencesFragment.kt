@@ -1,11 +1,9 @@
 package com.cosmos.unreddit.ui.preferences
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
-import androidx.annotation.StringRes
 import androidx.core.view.children
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -18,19 +16,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cosmos.unreddit.R
 import com.cosmos.unreddit.data.model.preferences.ContentPreferences.PreferencesKeys
 import com.cosmos.unreddit.data.model.preferences.DataPreferences
-import com.cosmos.unreddit.data.model.preferences.DataPreferences.RedditSource.REDDIT
-import com.cosmos.unreddit.data.model.preferences.DataPreferences.RedditSource.REDDIT_SCRAP
-import com.cosmos.unreddit.data.model.preferences.DataPreferences.RedditSource.TEDDIT
 import com.cosmos.unreddit.data.model.preferences.UiPreferences
 import com.cosmos.unreddit.databinding.LayoutPreferenceListBinding
-import com.cosmos.unreddit.ui.policydisclaimer.PolicyDisclaimerDialogFragment
-import com.cosmos.unreddit.ui.redditsource.RedditSourceDialogFragment
+import com.cosmos.unreddit.ui.instance.InstanceDialogFragment
 import com.cosmos.unreddit.util.extension.applyWindowInsets
 import com.cosmos.unreddit.util.extension.getNavOptions
 import com.cosmos.unreddit.util.extension.latest
 import com.cosmos.unreddit.util.extension.launchRepeat
-import com.cosmos.unreddit.util.extension.restart
-import com.cosmos.unreddit.util.extension.serializable
 import com.cosmos.unreddit.util.extension.unredditApplication
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,7 +45,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private var sourcePreference: Preference? = null
     private var privacyEnhancerPreference: Preference? = null
     private var aboutPreference: Preference? = null
-    private var policyDisclaimerPreference: Preference? = null
 
     private val navOptions: NavOptions by lazy { getNavOptions() }
 
@@ -85,7 +76,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             clipToPadding = false
         }
 
-        initResultListener()
         bindViewModel()
     }
 
@@ -146,13 +136,9 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
         }
 
-        sourcePreference = findPreference<Preference?>(
-            DataPreferences.PreferencesKeys.REDDIT_SOURCE.name
-        )?.apply {
+        sourcePreference = findPreference<Preference?>(KEY_TEDDIT_API)?.apply {
             setOnPreferenceClickListener {
-                viewModel.redditSource.latest?.let { source ->
-                    showRedditSourceDialog(source.first, source.second)
-                }
+                InstanceDialogFragment.show(childFragmentManager)
                 true
             }
         }
@@ -170,49 +156,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             setOnPreferenceClickListener {
                 openAbout()
                 true
-            }
-        }
-
-        policyDisclaimerPreference = findPreference<Preference>("policy_disclaimer")?.apply {
-            setOnPreferenceClickListener {
-                showPolicyDisclaimer()
-                true
-            }
-        }
-    }
-
-    private fun initResultListener() {
-        childFragmentManager.setFragmentResultListener(
-            RedditSourceDialogFragment.REQUEST_KEY_SOURCE,
-            viewLifecycleOwner
-        ) { _, bundle ->
-            val source = bundle.serializable(RedditSourceDialogFragment.KEY_SOURCE)
-                ?: REDDIT
-            val instance = bundle.serializable<String>(RedditSourceDialogFragment.KEY_INSTANCE)
-
-            when (source) {
-                REDDIT -> {
-                    // Update value without asking for confirmation
-                    updateRedditSource(source.value)
-                }
-
-                TEDDIT -> {
-                    // Show disclaimer to user
-                    showRedditSourceDisclaimer(
-                        R.string.dialog_reddit_source_disclaimer_body,
-                        source,
-                        instance,
-                        true
-                    )
-                }
-
-                REDDIT_SCRAP -> {
-                    showRedditSourceDisclaimer(
-                        R.string.dialog_reddit_source_scrap_disclaimer_body,
-                        source,
-                        null
-                    )
-                }
             }
         }
     }
@@ -255,24 +198,15 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
 
             launch {
-                viewModel.redditSource.collect { value ->
-                    DataPreferences.RedditSource.fromValue(value.first).let {
-                        val summary = when (it) {
-                            REDDIT -> getString(R.string.preference_reddit_source_reddit)
-
-                            REDDIT_SCRAP -> {
-                                getString(R.string.preference_reddit_source_reddit_scrap)
-                            }
-
-                            TEDDIT -> {
-                                String.format(
-                                    "%s - %s",
-                                    getString(R.string.preference_reddit_source_teddit),
-                                    value.second
-                                )
-                            }
-                        }
-                        sourcePreference?.summary = summary
+                viewModel.instance.collect { instance ->
+                    sourcePreference?.summary = when {
+                        instance == null -> getString(R.string.preference_teddit_api_not_set)
+                        instance.hasCredentials -> getString(
+                            R.string.preference_teddit_api_summary_auth,
+                            instance.url.toString().removeSuffix("/"),
+                            instance.username
+                        )
+                        else -> instance.url.toString().removeSuffix("/")
                     }
                 }
             }
@@ -307,77 +241,12 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         viewModel.setNightMode(mode)
     }
 
-    private fun showRedditSourceDialog(source: Int, instance: String) {
-        RedditSourceDialogFragment.show(
-            childFragmentManager,
-            DataPreferences.RedditSource.fromValue(source),
-            instance,
-            viewModel.tedditInstances
-        )
-    }
-
-    private fun showRedditSourceDisclaimer(
-        @StringRes message: Int,
-        source: DataPreferences.RedditSource,
-        instance: String?,
-        restartRequired: Boolean = false
-    ) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.dialog_reddit_source_disclaimer_title)
-            .setMessage(message)
-            .setPositiveButton(R.string.ok) { _, _ ->
-                // Ignore
-            }
-            .setNeutralButton(R.string.dialog_cancel) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setCancelable(false)
-            .show()
-            .apply {
-                getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-                    updateRedditSource(source.value, instance)
-                    if (restartRequired) {
-                        showRestartRequiredDialog()
-                    }
-                    dismiss()
-                }
-            }
-    }
-
-    private fun showRestartRequiredDialog() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.dialog_restart_required_title)
-            .setMessage(R.string.dialog_restart_required_message)
-            .setPositiveButton(R.string.ok) { _, _ ->
-                // Ignore
-            }
-            .setNeutralButton(R.string.dialog_restart_required_later) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setCancelable(false)
-            .show()
-            .apply {
-                getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-                    requireContext().restart()
-                    dismiss()
-                }
-            }
-    }
-
-    private fun updateRedditSource(source: Int, instance: String? = null) {
-        viewModel.setRedditSource(source, instance)
-    }
-
     private fun openBackup() {
         findNavController().navigate(PreferencesFragmentDirections.openBackup(), navOptions)
     }
 
     private fun openAbout() {
         findNavController().navigate(PreferencesFragmentDirections.openAbout(), navOptions)
-    }
-
-    private fun showPolicyDisclaimer() {
-        PolicyDisclaimerDialogFragment.show(parentFragmentManager)
     }
 
     private fun openPrivacyEnhancer() {
@@ -387,12 +256,6 @@ class PreferencesFragment : PreferenceFragmentCompat() {
         )
     }
 
-    override fun onStop() {
-        super.onStop()
-        childFragmentManager
-            .clearFragmentResultListener(RedditSourceDialogFragment.REQUEST_KEY_SOURCE)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -400,5 +263,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
 
     companion object {
         const val TAG = "PreferencesFragment"
+
+        private const val KEY_TEDDIT_API = "teddit_api"
     }
 }

@@ -138,6 +138,7 @@ dependencies {
     implementation("com.github.MikeOrtiz:TouchImageView:${Dependencies.Versions.touchImageView}")
 
     implementation("com.google.android.exoplayer:exoplayer:${Dependencies.Versions.exoPlayer}")
+    implementation("com.google.android.exoplayer:extension-okhttp:${Dependencies.Versions.exoPlayer}")
 
     implementation("org.jsoup:jsoup:${Dependencies.Versions.jsoup}")
 

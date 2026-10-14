@@ -5,6 +5,7 @@ import com.cosmos.unreddit.data.model.TimeSorting
 import com.cosmos.unreddit.data.remote.api.reddit.model.Child
 import com.cosmos.unreddit.data.remote.api.reddit.model.Listing
 import com.cosmos.unreddit.data.remote.api.reddit.model.TedditUser
+import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -42,6 +43,14 @@ interface TedditApi {
         @Query("sort") sort: Sort
     ): List<Listing>
 
+    /** A comment thread focused on [commentId], as raw JSON (see TedditSource.getMoreChildren). */
+    @GET("/comments/{post}/_/{comment}?api")
+    suspend fun getCommentThread(
+        @Path("post") postId: String,
+        @Path("comment") commentId: String,
+        @Query("sort") sort: Sort?
+    ): ResponseBody
+
     //region User
 
     @GET("/u/{user}/submitted?api")
@@ -64,6 +73,14 @@ interface TedditApi {
 
     //region Search
 
+    @GET("/search?api&nsfw=on")
+    suspend fun searchPost(
+        @Query("q") query: String,
+        @Query("sort") sort: Sort?,
+        @Query("t") timeSorting: TimeSorting?,
+        @Query("after") after: String? = null
+    ): Listing
+
     @GET("/subreddits/search?api&nsfw=on")
     suspend fun searchSubreddit(
         @Query("q") query: String,
@@ -75,6 +92,7 @@ interface TedditApi {
     //endregion
 
     companion object {
-        const val BASE_URL = "https://teddit.net/"
+        /** Placeholder; InstanceInterceptor points every request at the configured instance. */
+        const val BASE_URL = "http://instance.invalid/"
     }
 }

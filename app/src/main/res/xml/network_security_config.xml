@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">redgifs.com</domain>
-        <domain includeSubdomains="true">i.imgur.com</domain>
-    </domain-config>
+    <!-- Plain HTTP is allowed for instances on a local network (http:// typed explicitly);
+         the instance dialog warns when credentials would be sent unencrypted. -->
+    <base-config cleartextTrafficPermitted="true" />
 </network-security-config>

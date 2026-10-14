@@ -20,7 +20,6 @@ object LinkUtil {
 
     private val REDDIT_LINK = Regex("(.+?)\\.reddit\\.com")
     private val IMGUR_LINK = Regex("([im]\\.)?(stack\\.)?imgur\\.(com|io)")
-    private val GFYCAT_LINK = Regex("(.+?\\.)?gfycat\\.com")
     private val REDGIFS_LINK = Regex("(.+?\\.)?redgifs\\.com")
     private val STREAMABLE_LINK = Regex("(.+?)\\.streamable\\.com")
 
@@ -62,7 +61,7 @@ object LinkUtil {
         return link.contains(REDDIT_SOUNDTRACK_NAME)
     }
 
-    fun getGfycatId(link: String): String {
+    fun getRedgifsId(link: String): String {
         return link.toHttpUrlOrNull()?.pathSegments?.lastOrNull() ?: return link
     }
 
@@ -104,8 +103,6 @@ object LinkUtil {
                     else -> MediaType.IMGUR_LINK
                 }
             }
-
-            domain.matches(GFYCAT_LINK) -> MediaType.GFYCAT
 
             domain.matches(REDGIFS_LINK) -> MediaType.REDGIFS
 

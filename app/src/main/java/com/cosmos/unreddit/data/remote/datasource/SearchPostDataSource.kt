@@ -2,10 +2,10 @@ package com.cosmos.unreddit.data.remote.datasource
 
 import com.cosmos.unreddit.data.model.Sorting
 import com.cosmos.unreddit.data.remote.api.reddit.model.Listing
-import com.cosmos.unreddit.data.remote.api.reddit.source.CurrentSource
+import com.cosmos.unreddit.data.remote.api.reddit.source.TedditSource
 
 class SearchPostDataSource(
-    private val source: CurrentSource,
+    private val source: TedditSource,
     query: String,
     sorting: Sorting
 ) : PostListDataSource(source, query, sorting) {

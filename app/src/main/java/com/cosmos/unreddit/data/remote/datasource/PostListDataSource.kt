@@ -6,13 +6,13 @@ import androidx.paging.PagingState
 import com.cosmos.unreddit.data.model.Sorting
 import com.cosmos.unreddit.data.remote.api.reddit.model.Child
 import com.cosmos.unreddit.data.remote.api.reddit.model.Listing
-import com.cosmos.unreddit.data.remote.api.reddit.source.CurrentSource
+import com.cosmos.unreddit.data.remote.api.reddit.source.TedditSource
 import com.squareup.moshi.JsonDataException
 import retrofit2.HttpException
 import java.io.IOException
 
 open class PostListDataSource(
-    private val source: CurrentSource,
+    private val source: TedditSource,
     private val query: String,
     private val sorting: Sorting
 ) : PagingSource<String, Child>() {

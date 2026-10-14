@@ -124,11 +124,7 @@
     <string name="dialog_credit_show_website">Show Website</string>
     <string name="dialog_credit_show_license">Show License</string>
 
-    <string name="dialog_reddit_source_title">Reddit Source</string>
 
-    <string name="dialog_reddit_source_disclaimer_title">Disclaimer</string>
-    <string name="dialog_reddit_source_disclaimer_body">This is an experimental feature.\nTeddit doesn\'t provide an API for all of Reddit\'s content. Therefore, some requests will still be sent to reddit.com.</string>
-    <string name="dialog_reddit_source_scrap_disclaimer_body">This is an experimental feature.\nSome data are missing compared to the official APIs, and some features are not implemented/implementable.\nThis source uses old.reddit.com.</string>
 
     <string name="empty_data">Nothing to see here…</string>
     <string name="empty_data_subscriptions">You have no subscriptions yet.\nUse the search feature to look for Subreddits.</string>
@@ -150,15 +146,10 @@
     <string name="preference_show_nsfw_preview">Show NSFW preview</string>
     <string name="preference_show_spoiler_preview">Show Spoiler preview</string>
 
-    <string name="preference_reddit_source">Reddit Source</string>
-    <string name="preference_reddit_source_reddit">Reddit</string>
-    <string name="preference_reddit_source_reddit_scrap">Reddit (Web Scraping)</string>
-    <string name="preference_reddit_source_teddit">Teddit</string>
 
     <string name="preference_backup">Import/Export</string>
 
     <string name="preference_about">About</string>
-    <string name="preference_policy_disclaimer">Reddit\'s API Policy Change</string>
 
     <string name="preference_privacy_enhancer">Privacy Enhancer</string>
     <string name="preference_privacy_enhancer_summary">Redirect links to privacy-friendly frontends</string>
@@ -167,9 +158,6 @@
 
     <string name="preference_privacy_enhancer_service_summary">%1$s - %2$s</string>
 
-    <string name="instance_hint">Instance</string>
-    <string name="instance_empty_error">Instance cannot be empty</string>
-    <string name="instance_invalid_error">Instance URL is invalid</string>
 
     <string name="redirect_mode_on">ON</string>
     <string name="redirect_mode_off">OFF</string>
@@ -208,9 +196,6 @@
     <string name="dialog_privacy_enhancer_title">Privacy Enhancer</string>
     <string name="dialog_privacy_enhancer_message">Would you like to redirect %1$s to %2$s?</string>
 
-    <string name="dialog_restart_required_title">Restart Required</string>
-    <string name="dialog_restart_required_message">A restart of the app is required to take the change into account.\nWould you like to restart now?</string>
-    <string name="dialog_restart_required_later">Maybe Later</string>
 
     <string name="profile_name_length_error">Profile name must be between 3 and 20 characters</string>
     <string name="profile_already_exists_error">Profile already exists</string>
@@ -274,9 +259,33 @@
 
     <string name="toast_clipboard_copied_email">Email copied to clipboard</string>
 
-    <string name="dialog_policy_disclaimer_title">Reddit\'s API Policy Change</string>
-    <string name="dialog_policy_disclaimer_message">In the coming weeks, a new policy regarding Reddit\'s API will come into effect. Reddit will stop providing a free API (among other things), thus putting a stop to most third-party apps, including Stealth.\n\nTo try to circumvent that issue, a new source for the content has been implemented (available in the preferences, under Reddit Source) based on old.reddit.com. It might not work for long after the policy change, or even at all, but at least it does not rely on any API.\n\nYou can find more information about the new policy <a href="https://www.reddit.com/r/reddit/comments/12qwagm/an_update_regarding_reddits_api/">here</a>.\n\nPlease feel free to use the contact information available in the About section (email, GitLab, or the Matrix channel) if you have any questions.</string>
 
-    <string name="snackbar_policy_disclaimer_message">%1$s might stop working soon</string>
-    <string name="snackbar_policy_disclaimer_action">Learn More</string>
+
+    <!-- Teddit API instance -->
+    <string name="preference_teddit_api">Teddit API</string>
+    <string name="preference_teddit_api_not_set">Not set</string>
+    <string name="preference_teddit_api_summary_auth">%1$s (signed in as %2$s)</string>
+    <string name="instance_dialog_title">Teddit API</string>
+    <string name="instance_setup_title">Welcome to Stealth</string>
+    <string name="instance_setup_message">Stealth loads Reddit through a Teddit API instance, such as redlib-tor-api. Enter the address of your instance to get started.</string>
+    <string name="instance_url_hint">Instance address</string>
+    <string name="instance_url_helper">e.g. api.example.org or https://api.example.org:8443</string>
+    <string name="instance_username_hint">Username (optional)</string>
+    <string name="instance_password_hint">Password</string>
+    <string name="instance_password_keep_hint">Password (leave empty to keep)</string>
+    <string name="instance_auth_helper">For instances behind HTTP Basic authentication. The password is encrypted on this device.</string>
+    <string name="instance_url_empty_error">Enter the address of your instance</string>
+    <string name="instance_url_invalid_error">This address is not valid. Credentials go in their own fields.</string>
+    <string name="instance_http_warning">This address uses plain HTTP: your password would be sent unencrypted.</string>
+    <string name="instance_test">Test</string>
+    <string name="instance_testing">Connecting…</string>
+    <string name="instance_test_ok">Connected</string>
+    <string name="instance_test_unauthorized">Wrong username or password</string>
+    <string name="instance_test_failed">Could not reach the instance (%1$s)</string>
+    <string name="instance_test_http_error">The instance answered with HTTP %1$d</string>
+    <string name="instance_save_anyway">Save anyway</string>
+
+    <string name="instance_hint">Instance</string>
+    <string name="instance_empty_error">Instance cannot be empty</string>
+    <string name="instance_invalid_error">Instance URL is invalid</string>
 </resources>

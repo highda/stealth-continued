@@ -153,18 +153,20 @@ class CommentAdapter(
     ) {
         val post = postEntity ?: return
 
-        val containsMoreComments = comment.more.size > LOAD_MORE_LIMIT
+        // Top-level comments cost one request each (see TedditSource.getMoreChildren)
+        val limit = if (comment.parent.startsWith("t1_")) LOAD_MORE_LIMIT else LOAD_MORE_TOP_LIMIT
+        val containsMoreComments = comment.more.size > limit
 
-        val children = comment.more.take(LOAD_MORE_LIMIT).joinToString(",")
+        val children = comment.more.take(limit)
         if (containsMoreComments) {
-            // Remove first 100 comments from list
+            // Remove the requested comments from the stub
             with(comment) {
-                more.subList(0, LOAD_MORE_LIMIT).clear()
-                count = if (count > LOAD_MORE_LIMIT) count - LOAD_MORE_LIMIT else 0
+                more.subList(0, limit).clear()
+                count = if (count > limit) count - limit else 0
             }
         }
 
-        repository.getMoreChildren(children, post.id)
+        repository.getMoreChildren(children, post.id, comment.parent, comment.depth)
             .map {
                 commentMapper.dataToEntities(it.json.data.things, null)
             }
@@ -427,6 +429,7 @@ class CommentAdapter(
 
     companion object {
         const val LOAD_MORE_LIMIT = 100
+        const val LOAD_MORE_TOP_LIMIT = 10
         const val COMMENT_DEPTH_LIMIT = 10
 
         private val COMMENT_COMPARATOR = object : DiffUtil.ItemCallback<Comment>() {

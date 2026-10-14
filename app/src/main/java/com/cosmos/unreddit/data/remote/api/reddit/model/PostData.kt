@@ -155,7 +155,6 @@ data class PostData(
                 }
             }
 
-            domain == "gfycat.com" -> MediaType.GFYCAT
             domain == "redgifs.com" -> MediaType.REDGIFS
             domain == "streamable.com" -> MediaType.STREAMABLE
             domain == "v.redd.it" -> {
@@ -211,7 +210,6 @@ data class PostData(
             MediaType.REDDIT_GIF,
             MediaType.IMGUR_VIDEO,
             MediaType.IMGUR_GIF,
-            MediaType.GFYCAT,
             MediaType.REDGIFS,
             MediaType.STREAMABLE,
             MediaType.VIDEO -> PostType.VIDEO

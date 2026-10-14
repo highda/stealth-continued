@@ -14,7 +14,7 @@ enum class MediaType {
     // Imgur
     IMGUR_GALLERY, IMGUR_ALBUM, IMGUR_IMAGE, IMGUR_VIDEO, IMGUR_GIF, IMGUR_LINK,
 
-    // Gfycat
+    // Gfycat shut down in 2023; GFYCAT is kept so saved posts still load, and opens as a link
     GFYCAT, REDGIFS,
 
     // Streamable

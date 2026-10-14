@@ -15,7 +15,7 @@ import com.cosmos.unreddit.data.remote.api.reddit.model.AboutUserChild
 import com.cosmos.unreddit.data.remote.api.reddit.model.Child
 import com.cosmos.unreddit.data.remote.api.reddit.model.Listing
 import com.cosmos.unreddit.data.remote.api.reddit.model.MoreChildren
-import com.cosmos.unreddit.data.remote.api.reddit.source.CurrentSource
+import com.cosmos.unreddit.data.remote.api.reddit.source.TedditSource
 import com.cosmos.unreddit.data.remote.datasource.CommentsDataSource
 import com.cosmos.unreddit.data.remote.datasource.SearchPostDataSource
 import com.cosmos.unreddit.data.remote.datasource.SearchSubredditDataSource
@@ -34,7 +34,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PostListRepository @Inject constructor(
-    private val source: CurrentSource,
+    private val source: TedditSource,
     private val redditDatabase: RedditDatabase,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     @MainImmediateDispatcher private val mainImmediateDispatcher: CoroutineDispatcher
@@ -44,8 +44,13 @@ class PostListRepository @Inject constructor(
         emit(source.getPost(permalink, sort = sorting.generalSorting))
     }
 
-    fun getMoreChildren(children: String, linkId: String): Flow<MoreChildren> = flow {
-        emit(source.getMoreChildren(children, linkId))
+    fun getMoreChildren(
+        children: List<String>,
+        linkId: String,
+        parentId: String,
+        depth: Int
+    ): Flow<MoreChildren> = flow {
+        emit(source.getMoreChildren(children, linkId, parentId, depth))
     }
 
     //region Subreddit

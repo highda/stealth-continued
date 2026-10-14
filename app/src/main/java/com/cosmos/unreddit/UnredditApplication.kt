@@ -11,11 +11,13 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import com.cosmos.unreddit.data.model.preferences.UiPreferences
 import com.cosmos.unreddit.data.repository.PreferencesRepository
+import com.cosmos.unreddit.di.NetworkModule
 import com.cosmos.unreddit.util.FileUncaughtExceptionHandler
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
+import okhttp3.OkHttpClient
 
 @HiltAndroidApp
 class UnredditApplication : Application(), ImageLoaderFactory, Configuration.Provider {
@@ -25,6 +27,10 @@ class UnredditApplication : Application(), ImageLoaderFactory, Configuration.Pro
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+
+    @Inject
+    @NetworkModule.InstanceOkHttp
+    lateinit var okHttpClient: OkHttpClient
 
     var appTheme: Int = -1
         set(mode) {
@@ -51,6 +57,7 @@ class UnredditApplication : Application(), ImageLoaderFactory, Configuration.Pro
 
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(applicationContext)
+            .okHttpClient { okHttpClient }
             .components {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     add(ImageDecoderDecoder.Factory())

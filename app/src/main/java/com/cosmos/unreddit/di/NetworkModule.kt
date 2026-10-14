@@ -2,12 +2,8 @@ package com.cosmos.unreddit.di
 
 import com.cosmos.unreddit.data.remote.RawJsonInterceptor
 import com.cosmos.unreddit.data.remote.TargetRedditInterceptor
-import com.cosmos.unreddit.data.remote.api.gfycat.GfycatApi
 import com.cosmos.unreddit.data.remote.api.imgur.ImgurApi
 import com.cosmos.unreddit.data.remote.api.imgur.adapter.AlbumDataAdapter
-import com.cosmos.unreddit.data.remote.api.reddit.JsonInterceptor
-import com.cosmos.unreddit.data.remote.api.reddit.RedditApi
-import com.cosmos.unreddit.data.remote.api.reddit.RedditCookieJar
 import com.cosmos.unreddit.data.remote.api.reddit.SortingConverterFactory
 import com.cosmos.unreddit.data.remote.api.reddit.TedditApi
 import com.cosmos.unreddit.data.remote.api.reddit.adapter.EditedAdapter
@@ -22,18 +18,16 @@ import com.cosmos.unreddit.data.remote.api.reddit.model.CommentChild
 import com.cosmos.unreddit.data.remote.api.reddit.model.MoreChild
 import com.cosmos.unreddit.data.remote.api.reddit.model.PostChild
 import com.cosmos.unreddit.data.remote.api.redgifs.RedgifsApi
+import com.cosmos.unreddit.data.remote.instance.InstanceAuthInterceptor
+import com.cosmos.unreddit.data.remote.instance.InstanceInterceptor
+import com.cosmos.unreddit.data.remote.instance.InstanceManager
 import com.cosmos.unreddit.data.remote.api.streamable.StreamableApi
-import com.cosmos.unreddit.data.repository.PreferencesRepository
-import com.cosmos.unreddit.util.LinkValidator
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -59,9 +53,10 @@ object NetworkModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class ImgurMoshi
 
+    /** Base client: adds the instance's credentials to requests for the instance only. */
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
-    annotation class RedditOkHttp
+    annotation class InstanceOkHttp
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
@@ -70,18 +65,6 @@ object NetworkModule {
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class GenericOkHttp
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class RedditScrapOkHttp
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class RedditOfficial
-
-    @Qualifier
-    @Retention(AnnotationRetention.BINARY)
-    annotation class RedditScrap
 
     @RedditMoshi
     @Provides
@@ -118,13 +101,12 @@ object NetworkModule {
             .build()
     }
 
-    @RedditOkHttp
+    @InstanceOkHttp
     @Provides
     @Singleton
-    fun provideRedditOkHttpClient(): OkHttpClient {
+    fun provideInstanceOkHttpClient(instanceManager: InstanceManager): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(RawJsonInterceptor())
-            .addInterceptor(JsonInterceptor())
+            .addNetworkInterceptor(InstanceAuthInterceptor { instanceManager.current })
             .connectTimeout(TIMEOUT.first, TIMEOUT.second)
             .readTimeout(TIMEOUT.first, TIMEOUT.second)
             .writeTimeout(TIMEOUT.first, TIMEOUT.second)
@@ -134,91 +116,32 @@ object NetworkModule {
     @TedditOkHttp
     @Provides
     @Singleton
-    fun provideTedditOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
+    fun provideTedditOkHttpClient(
+        @InstanceOkHttp okHttpClient: OkHttpClient,
+        instanceManager: InstanceManager
+    ): OkHttpClient {
+        return okHttpClient.newBuilder()
+            .addInterceptor(InstanceInterceptor { instanceManager.current })
             .addInterceptor(RawJsonInterceptor())
             .addInterceptor(TargetRedditInterceptor())
-            .connectTimeout(TIMEOUT.first, TIMEOUT.second)
-            .readTimeout(TIMEOUT.first, TIMEOUT.second)
-            .writeTimeout(TIMEOUT.first, TIMEOUT.second)
             .build()
     }
 
     @GenericOkHttp
     @Provides
     @Singleton
-    fun provideGenericOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .connectTimeout(TIMEOUT.first, TIMEOUT.second)
-            .readTimeout(TIMEOUT.first, TIMEOUT.second)
-            .writeTimeout(TIMEOUT.first, TIMEOUT.second)
-            .build()
-    }
-
-    @RedditScrapOkHttp
-    @Provides
-    @Singleton
-    fun provideRedditScrapOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .connectTimeout(TIMEOUT.first, TIMEOUT.second)
-            .readTimeout(TIMEOUT.first, TIMEOUT.second)
-            .writeTimeout(TIMEOUT.first, TIMEOUT.second)
-            .cookieJar(RedditCookieJar())
-            .build()
-    }
-
-    @RedditOfficial
-    @Provides
-    @Singleton
-    fun provideRedditApi(
-        @RedditMoshi moshi: Moshi,
-        @RedditOkHttp okHttpClient: OkHttpClient
-    ): RedditApi {
-        return Retrofit.Builder()
-            .baseUrl(RedditApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addConverterFactory(SortingConverterFactory())
-            .client(okHttpClient)
-            .build()
-            .create(RedditApi::class.java)
-    }
-
-    @RedditScrap
-    @Provides
-    @Singleton
-    fun provideRedditScrapingApi(
-        @RedditMoshi moshi: Moshi,
-        @RedditScrapOkHttp okHttpClient: OkHttpClient
-    ): RedditApi {
-        return Retrofit.Builder()
-            .baseUrl(RedditApi.BASE_URL_OLD)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addConverterFactory(SortingConverterFactory())
-            .client(okHttpClient)
-            .build()
-            .create(RedditApi::class.java)
+    fun provideGenericOkHttpClient(@InstanceOkHttp okHttpClient: OkHttpClient): OkHttpClient {
+        return okHttpClient
     }
 
     @Provides
     @Singleton
     fun provideTedditApi(
         @RedditMoshi moshi: Moshi,
-        @TedditOkHttp okHttpClient: OkHttpClient,
-        preferencesRepository: PreferencesRepository
+        @TedditOkHttp okHttpClient: OkHttpClient
     ): TedditApi {
-        // Get the saved instance unless it's empty, then take Teddit's default instance
-        val url = runBlocking {
-            preferencesRepository
-                .getRedditSourceInstance()
-                .firstOrNull()
-                .takeUnless { it.isNullOrEmpty() }
-                ?: TedditApi.BASE_URL
-        }
-
-        val httpUrl = LinkValidator(url).validUrl ?: TedditApi.BASE_URL.toHttpUrl()
-
         return Retrofit.Builder()
-            .baseUrl(httpUrl)
+            .baseUrl(InstanceInterceptor.PLACEHOLDER)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addConverterFactory(SortingConverterFactory())
             .client(okHttpClient)
@@ -252,20 +175,6 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
             .create(StreamableApi::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGfycatApi(
-        @BasicMoshi moshi: Moshi,
-        @GenericOkHttp okHttpClient: OkHttpClient
-    ): GfycatApi {
-        return Retrofit.Builder()
-            .baseUrl(GfycatApi.BASE_URL_GFYCAT)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .client(okHttpClient)
-            .build()
-            .create(GfycatApi::class.java)
     }
 
     @Provides

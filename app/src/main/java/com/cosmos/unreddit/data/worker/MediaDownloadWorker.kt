@@ -26,6 +26,7 @@ import com.cosmos.unreddit.R
 import com.cosmos.unreddit.data.model.GalleryMedia
 import com.cosmos.unreddit.data.receiver.DownloadManagerReceiver
 import com.cosmos.unreddit.di.DispatchersModule.IoDispatcher
+import com.cosmos.unreddit.di.NetworkModule.InstanceOkHttp
 import com.cosmos.unreddit.util.DateUtil
 import com.cosmos.unreddit.util.IntentUtil
 import com.cosmos.unreddit.util.extension.cancelAllWorkByTag
@@ -35,6 +36,8 @@ import com.cosmos.unreddit.util.extension.enqueueUniqueWork
 import com.cosmos.unreddit.util.extension.showNotification
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import java.io.File
+import java.util.Date
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
@@ -44,14 +47,13 @@ import okio.BufferedSink
 import okio.BufferedSource
 import okio.buffer
 import okio.sink
-import java.io.File
-import java.util.Date
 
 @HiltWorker
 class MediaDownloadWorker @AssistedInject constructor (
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @InstanceOkHttp private val okHttpClient: OkHttpClient
 ) : CoroutineWorker(appContext, params) {
 
     private val filename: String
@@ -163,7 +165,7 @@ class MediaDownloadWorker @AssistedInject constructor (
 
         withContext(ioDispatcher) {
             runCatching {
-                val response = OkHttpClient().newCall(Request.Builder().url(url).build()).execute()
+                val response = okHttpClient.newCall(Request.Builder().url(url).build()).execute()
 
                 if (response.isSuccessful) {
                     val values = ContentValues().apply {
@@ -229,7 +231,7 @@ class MediaDownloadWorker @AssistedInject constructor (
 
         withContext(ioDispatcher) {
             runCatching {
-                val response = OkHttpClient().newCall(Request.Builder().url(url).build()).execute()
+                val response = okHttpClient.newCall(Request.Builder().url(url).build()).execute()
 
                 if (response.isSuccessful) {
                     val sink = file.sink().buffer()

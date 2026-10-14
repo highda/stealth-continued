@@ -9,7 +9,6 @@ import com.cosmos.unreddit.data.model.db.Redirect
 import com.cosmos.unreddit.data.model.preferences.ContentPreferences
 import com.cosmos.unreddit.data.model.preferences.DataPreferences
 import com.cosmos.unreddit.data.model.preferences.MediaPreferences
-import com.cosmos.unreddit.data.model.preferences.PolicyDisclaimerPreferences
 import com.cosmos.unreddit.data.model.preferences.ProfilePreferences
 import com.cosmos.unreddit.data.model.preferences.UiPreferences
 import com.cosmos.unreddit.util.extension.getValue
@@ -94,34 +93,6 @@ class PreferencesRepository @Inject constructor(
         )
     }
 
-    suspend fun setRedditSource(redditSource: Int) {
-        preferencesDatastore.setValue(
-            DataPreferences.PreferencesKeys.REDDIT_SOURCE,
-            redditSource
-        )
-    }
-
-    fun getRedditSource(defaultValue: Int = DataPreferences.RedditSource.REDDIT.value): Flow<Int> {
-        return preferencesDatastore.getValue(
-            DataPreferences.PreferencesKeys.REDDIT_SOURCE,
-            defaultValue
-        )
-    }
-
-    suspend fun setRedditSourceInstance(instance: String) {
-        preferencesDatastore.setValue(
-            DataPreferences.PreferencesKeys.REDDIT_SOURCE_INSTANCE,
-            instance
-        )
-    }
-
-    fun getRedditSourceInstance(defaultValue: String = ""): Flow<String> {
-        return preferencesDatastore.getValue(
-            DataPreferences.PreferencesKeys.REDDIT_SOURCE_INSTANCE,
-            defaultValue
-        )
-    }
-
     suspend fun setPrivacyEnhancerEnabled(enablePrivacyEnhancer: Boolean) {
         preferencesDatastore.setValue(
             DataPreferences.PreferencesKeys.PRIVACY_ENHANCER,
@@ -189,24 +160,6 @@ class PreferencesRepository @Inject constructor(
 
     suspend fun setMuteVideo(muteVideo: Boolean) {
         preferencesDatastore.setValue(MediaPreferences.PreferencesKeys.MUTE_VIDEO, muteVideo)
-    }
-
-    //endregion
-
-    //region Policy Disclaimer
-
-    fun getPolicyDisclaimerShown(defaultValue: Boolean): Flow<Boolean> {
-        return preferencesDatastore.getValue(
-            PolicyDisclaimerPreferences.PreferencesKeys.POLICY_DISCLAIMER_SHOWN,
-            defaultValue
-        )
-    }
-
-    suspend fun setPolicyDisclaimerShown(shown: Boolean) {
-        preferencesDatastore.setValue(
-            PolicyDisclaimerPreferences.PreferencesKeys.POLICY_DISCLAIMER_SHOWN,
-            shown
-        )
     }
 
     //endregion

@@ -6,7 +6,7 @@ import com.cosmos.unreddit.data.model.Sort
 import com.cosmos.unreddit.data.model.Sorting
 import com.cosmos.unreddit.data.remote.api.reddit.model.Child
 import com.cosmos.unreddit.data.remote.api.reddit.model.PostChild
-import com.cosmos.unreddit.data.remote.api.reddit.source.CurrentSource
+import com.cosmos.unreddit.data.remote.api.reddit.source.TedditSource
 import com.cosmos.unreddit.util.RedditUtil
 import com.cosmos.unreddit.util.extension.interlace
 import com.squareup.moshi.JsonDataException
@@ -21,7 +21,7 @@ import java.io.IOException
 import kotlin.math.ceil
 
 class SmartPostListDataSource(
-    private val source: CurrentSource,
+    private val source: TedditSource,
     private val query: List<String>,
     private val sorting: Sorting,
     private val defaultDispatcher: CoroutineDispatcher,
