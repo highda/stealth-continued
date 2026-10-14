@@ -1,3 +1,31 @@
+# 2.4.0 - 2026/10/14
+
+First release of Stealth-Continued, a fork of Stealth 2.3.1.
+
+### Added
+- HTTP Basic authentication for the Teddit API instance (password encrypted on the device)
+- Setup wizard on first launch, with a connection test
+- Custom feeds: named sets of subreddits per profile, in the profile drawer
+- "Add to a feed" on subreddit pages
+- Custom feeds in backups
+
+### Changed
+- The Teddit API is the only source; the Reddit and web scraping sources are gone
+- Post search, user lookup and "load more comments" go to the instance instead of reddit.com
+- Images, videos and downloads use the same HTTP client as the API
+- Changing the instance applies without a restart
+- Feeds of several subreddits use a restricted search (redlib-tor-api answers /r/a+b with r/popular)
+- The Privacy Enhancer's instance lists are current (from LibRedirect)
+- Android 15 (API 35), Gradle 8, Kotlin 1.9 and current libraries
+- Application ID space.highda.stealth: installs next to Stealth
+
+### Removed
+- "Stealth might stop working" banner and the Reddit API policy dialog
+- Gfycat (shut down in 2023): its links open as plain links
+
+### Fixed
+- Comments that fail to load are no longer dropped from "More"
+
 # 2.3.1 - 2025/06/01
 
 ### Fixed

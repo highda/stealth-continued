@@ -1,1 +1,10 @@
-Stealth provides features from Reddit, without the need for an account. In fact, the app doesn't even let you log in with a Reddit account.
+Stealth-Continued is a fork of Stealth, the account-free, privacy-oriented Reddit client. It loads everything through a Teddit API instance you choose (such as redlib-tor-api), so your phone never contacts Reddit.
+
+Features:
+- Browse Reddit: posts, comments, subreddits and users
+- Search posts, subreddits and users
+- Subscriptions and custom feeds
+- Profiles with their own subscriptions, feeds, history and saved items
+- Save posts, comments, photos and videos
+- HTTP Basic authentication for private instances
+- Light, dark and AMOLED themes

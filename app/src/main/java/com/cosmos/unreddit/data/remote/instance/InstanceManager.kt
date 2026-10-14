@@ -94,21 +94,14 @@ class InstanceManager @Inject constructor(
 
     private suspend fun load(): Instance? {
         val prefs = dataStore.data.first()
-        val url = (prefs[KEY_URL] ?: legacyUrl(prefs))?.let { Instance.parseUrl(it) }
-            ?: return null
+        val url = prefs[KEY_URL]?.let { Instance.parseUrl(it) } ?: return null
         val password = prefs[KEY_PASSWORD]?.let { CredentialCipher.decrypt(it) }.orEmpty()
         return Instance(url, prefs[KEY_USERNAME].orEmpty(), password)
-    }
-
-    /** Stealth 2.x stored only a Teddit hostname, and only used it with the Teddit source. */
-    private fun legacyUrl(prefs: Preferences): String? {
-        return prefs[LEGACY_INSTANCE]?.takeIf { it.isNotBlank() && it != "teddit.net" }
     }
 
     companion object {
         private val KEY_URL = stringPreferencesKey("instance_url")
         private val KEY_USERNAME = stringPreferencesKey("instance_username")
         private val KEY_PASSWORD = stringPreferencesKey("instance_password_encrypted")
-        private val LEGACY_INSTANCE = stringPreferencesKey("reddit_source_instance")
     }
 }

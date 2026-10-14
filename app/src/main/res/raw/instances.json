@@ -8,10 +8,18 @@
         "name": "breezeWiki",
         "instances": [
           "breezewiki.com",
+          "antifandom.com",
           "breezewiki.pussthecat.org",
-          "bw.odyssey346.dev",
-          "bw.vern.cc",
-          "breezewiki.esmailelbob.xyz"
+          "breeze.mint.lgbt",
+          "z.opnxng.com",
+          "breezewiki.moonshadow.dev",
+          "breezewiki.woodland.cafe",
+          "breezewiki.nadeko.net",
+          "fandom.reallyaweso.me",
+          "breezewiki.r4fo.com",
+          "bw.artemislena.eu",
+          "breeze.hostux.net",
+          "breezewiki.private.coffee"
         ]
       }
     ]
@@ -26,10 +34,27 @@
         "instances": [
           "libremdb.iket.me",
           "libremdb.pussthecat.org",
-          "libremdbeu.herokuapp.com",
-          "lmdb.tokhmi.xyz",
-          "libremdb.esmailelbob.xyz",
-          "ld.vern.cc"
+          "ld.vern.cc",
+          "binge.whatever.social",
+          "libremdb.lunar.icu",
+          "libremdb.jeikobu.net",
+          "lmdb.hostux.net",
+          "binge.whateveritworks.org",
+          "libremdb.nerdyfam.tech",
+          "libremdb.tux.pizza",
+          "libremdb.frontendfriendly.xyz",
+          "d.opnxng.com",
+          "libremdb.r4fo.com",
+          "libremdb.privacydev.net",
+          "libremdb.ducks.party",
+          "lmdb.ngn.tf",
+          "lmdb.bloat.cat",
+          "libremdb.darkness.services",
+          "libremdb.hyperreal.coffee",
+          "ld.ca.zorby.top",
+          "imdb.nerdvpn.de",
+          "libremdb.canine.tools",
+          "libremdb-fly.fly.dev"
         ]
       }
     ]
@@ -42,17 +67,29 @@
       {
         "name": "rimgo",
         "instances": [
-          "i.bcow.xyz",
+          "ri.bcow.xyz",
           "rimgo.pussthecat.org",
-          "rimgo.totaldarkness.net",
-          "rimgo.bus-hit.me",
-          "rimgo.esmailelbob.xyz",
-          "i.actionsack.com",
-          "rimgo.privacydev.net",
           "imgur.artemislena.eu",
-          "rimgo.vern.cc",
-          "rimgo.encrypted-data.xyz",
-          "rimgo.mha.fi"
+          "rimgo.hostux.net",
+          "ri.nadeko.net",
+          "rimgo.nohost.network",
+          "rimgo.catsarch.com",
+          "rimgo.ducks.party",
+          "rmgur.com",
+          "rimgo.privacyredirect.com",
+          "rimgo.reallyaweso.me",
+          "rimgo.bloat.cat",
+          "rimgo.darkness.services",
+          "rimgo.4o1x5.dev",
+          "rimgo.aketawi.space",
+          "imgur.nerdvpn.de",
+          "rimgo.canine.tools",
+          "r.opnxng.com",
+          "rg.kuuro.net",
+          "rimgo.proxik.cloud",
+          "anaimg.starbeamrainbowlabs.com",
+          "rimgo.wuemeli.com",
+          "rimgo.manerakai.com"
         ]
       }
     ]
@@ -63,35 +100,13 @@
     "pattern": "(www\\.)?instagram\\.com",
     "redirect": [
       {
-        "name": "bibliogram",
+        "name": "proxigram",
         "instances": [
-          "bibliogram.1d4.us",
-          "bibliogram.froth.zone",
-          "ig.tokhmi.xyz",
-          "ig.beparanoid.de",
-          "bibliogram.priv.pw"
-        ]
-      }
-    ]
-  },
-  {
-    "service": "lbry",
-    "name": "LBRY",
-    "pattern": "(odysee\\.com|lbry\\.tv)",
-    "redirect": [
-      {
-        "name": "librarian",
-        "instances": [
-          "lbry.bcow.xyz",
-          "odysee.076.ne.jp",
-          "librarian.pussthecat.org",
-          "lbry.projectsegfau.lt",
-          "librarian.esmailelbob.xyz",
-          "lbry.vern.cc",
-          "lbry.slipfox.xyz",
-          "lbry.sytes.net",
-          "lbry.webhop.me",
-          "lbry.mywire.org"
+          "ig.opnxng.com",
+          "proxigram.lunar.icu",
+          "gram.whatever.social",
+          "ig.snine.nl",
+          "proxigram.privacyredirect.com"
         ]
       }
     ]
@@ -104,15 +119,22 @@
       {
         "name": "scribe",
         "instances": [
-          "scribe.rip",
           "scribe.nixnet.services",
-          "scribe.citizen4.eu",
-          "scribe.bus-hit.me",
-          "scribe.froth.zone",
-          "scribe.esmailelbob.xyz",
-          "scribe.privacydev.net",
           "scribe.rawbit.ninja",
-          "sc.vern.cc"
+          "sc.vern.cc",
+          "m.opnxng.com",
+          "scribe.r4fo.com",
+          "scribe.privacyredirect.com"
+        ]
+      },
+      {
+        "name": "libMedium",
+        "instances": [
+          "libmedium.batsense.net",
+          "md.vern.cc",
+          "medium.hostux.net",
+          "r.sudovanilla.org",
+          "libmedium.ducks.party"
         ]
       }
     ]
@@ -128,12 +150,25 @@
           "quetre.iket.me",
           "qr.vern.cc",
           "quetre.pussthecat.org",
-          "quetreus.herokuapp.com",
           "quetre.tokhmi.xyz",
-          "quetre.projectsegfau.lt",
-          "quetre.esmailelbob.xyz",
-          "quetre.odyssey346.dev",
-          "quetre.privacydev.net"
+          "quetre.privacydev.net",
+          "ask.habedieeh.re",
+          "quetre.blackdrgn.nl",
+          "quetre.lunar.icu",
+          "q.opnxng.com",
+          "ask.sudovanilla.org",
+          "quetre.drgns.space",
+          "quetre.r4fo.com",
+          "quetre.ducks.party",
+          "quetre.nadeko.net",
+          "quetre.private.coffee",
+          "quetre.canine.tools",
+          "qt.bloat.cat",
+          "quetre.jeikobu.net",
+          "quetre.franklyflawless.org",
+          "q.307200.xyz",
+          "quora.nerdvpn.de",
+          "quetre.privacyredirect.com"
         ]
       }
     ]
@@ -144,84 +179,16 @@
     "pattern": "(.*?\\.)?redd((\\.?it)|(it\\.com))",
     "redirect": [
       {
-        "name": "teddit",
+        "name": "redlib",
         "instances": [
-          "teddit.net",
-          "teddit.ggc-project.de",
-          "teddit.zaggy.nl",
-          "teddit.namazso.eu",
-          "teddit.tinfoil-hat.net",
-          "teddit.domain.glass",
-          "snoo.ioens.is",
-          "teddit.httpjames.space",
-          "incogsnoo.com",
-          "teddit.pussthecat.org",
-          "reddit.lol",
-          "teddit.sethforprivacy.com",
-          "teddit.totaldarkness.net",
-          "teddit.adminforge.de",
-          "teddit.bus-hit.me",
-          "teddit.froth.zone",
-          "rdt.trom.tf",
-          "teddit.encrypted-data.xyz",
-          "i.opnxng.com",
-          "teddit.tokhmi.xyz",
-          "teddit.garudalinux.org",
-          "tedd.it",
-          "wiki.privacytools.io",
-          "td.vern.cc",
-          "teddit.rawbit.ninja",
-          "teddit.artemislena.eu",
-          "teddit.manasiwibi.com"
-        ]
-      },
-      {
-        "name": "libreddit",
-        "instances": [
-          "libreddit.spike.codes",
-          "libreddit.kavin.rocks",
-          "reddit.invak.id",
-          "lr.riverside.rocks",
-          "libreddit.strongthany.cc",
-          "libreddit.privacy.com.de",
-          "libreddit.domain.glass",
-          "r.nf",
-          "reddit.stuehieyr.com",
-          "lr.mint.lgbt",
-          "libreddit.drivet.xyz",
-          "libreddit.de",
-          "libreddit.pussthecat.org",
-          "libreddit.northboot.xyz",
-          "leddit.xyz",
-          "libreddit.hu",
-          "libreddit.totaldarkness.net",
-          "libreddit.esmailelbob.xyz",
-          "lr.vern.cc",
-          "libreddit.nl",
-          "reddi.tk",
-          "r.walkx.org",
-          "libreddit.kylrth.com",
-          "libreddit.tiekoetter.com",
-          "reddit.rtrace.io",
-          "libreddit.privacydev.net",
-          "r.ahwx.org",
-          "bob.fr.to",
-          "libreddit.dcs0.hu",
-          "reddit.dr460nf1r3.org",
-          "rd.jae.su",
-          "libreddit.foss.wtf",
-          "libreddit.encrypted-data.xyz",
-          "libreddit.eu.org",
-          "l.opnxng.com",
-          "libreddit.cachyos.org",
-          "rd.funami.tech",
-          "libreddit.projectsegfau.lt",
-          "www.futureddit.gq",
-          "lr.slipfox.xyz",
-          "libreddit.oxymagnesium.com",
-          "reddit.utsav2.dev",
-          "libreddit.freedit.eu",
-          "libreddit.mha.fi"
+          "safereddit.com",
+          "redlib.catsarch.com",
+          "redlib.r4fo.com",
+          "red.artemislena.eu",
+          "redlib.cow.rip",
+          "redlib.privacyredirect.com",
+          "redlib.nadeko.net",
+          "redlib.privadency.com"
         ]
       }
     ]
@@ -234,7 +201,8 @@
       {
         "name": "neuters",
         "instances": [
-          "neuters.de"
+          "neuters.de",
+          "nu.vern.cc"
         ]
       }
     ]
@@ -250,13 +218,17 @@
           "proxitok.pabloferreiro.es",
           "proxitok.pussthecat.org",
           "tok.habedieeh.re",
-          "proxitok.esmailelbob.xyz",
-          "proxitok.dhusch.de",
           "proxitok.privacydev.net",
-          "proxitok.odyssey346.dev",
           "tok.artemislena.eu",
           "tok.adminforge.de",
-          "proxitok.manasiwibi.com"
+          "cringe.whatever.social",
+          "proxitok.lunar.icu",
+          "proxitok.privacy.com.de",
+          "cringe.seitan-ayoub.lol",
+          "tt.opnxng.com",
+          "tiktok.wpme.pl",
+          "proxitok.r4fo.com",
+          "proxitok.belloworld.it"
         ]
       }
     ]
@@ -269,89 +241,13 @@
       {
         "name": "nitter",
         "instances": [
-          "nitter.net",
-          "nitter.lacontrevoie.fr",
-          "nitter.pussthecat.org",
-          "nitter.fdn.fr",
-          "nitter.1d4.us",
-          "nitter.kavin.rocks",
-          "nitter.unixfox.eu",
-          "nitter.domain.glass",
-          "nitter.namazso.eu",
-          "birdsite.xanny.family",
-          "nitter.hu",
-          "nitter.moomoo.me",
-          "bird.trom.tf",
-          "nitter.it",
-          "twitter.censors.us",
-          "nitter.grimneko.de",
-          "nitter.ca",
-          "twitter.076.ne.jp",
-          "nitter.fly.dev",
-          "notabird.site",
-          "nitter.weiler.rocks",
-          "nitter.sethforprivacy.com",
-          "nttr.stream",
-          "nitter.cutelab.space",
-          "nitter.nl",
-          "nitter.mint.lgbt",
-          "nitter.bus-hit.me",
-          "fuckthesacklers.network",
-          "nitter.esmailelbob.xyz",
-          "tw.artemislena.eu",
-          "nitter.winscloud.net",
-          "nitter.tiekoetter.com",
-          "nitter.spaceint.fr",
-          "twtr.bch.bar",
-          "nitter.privacy.com.de",
+          "xcancel.com",
           "nitter.poast.org",
-          "nitter.bird.froth.zone",
-          "nitter.dcs0.hu",
-          "twitter.dr460nf1r3.org",
-          "nitter.garudalinux.org",
-          "twitter.beparanoid.de",
-          "n.ramle.be",
-          "nitter.cz",
-          "nitter.privacydev.net",
-          "nitter.evil.site",
-          "tweet.lambda.dance",
-          "nitter.kylrth.com",
-          "nitter.foss.wtf",
-          "nitter.priv.pw",
-          "nitter.tokhmi.xyz",
-          "nitter.catalyst.sx",
-          "unofficialbird.com",
-          "nitter.projectsegfau.lt",
-          "singapore.unofficialbird.com",
-          "twt.funami.tech",
-          "nitter.fprivacy.com",
-          "canada.unofficialbird.com",
-          "india.unofficialbird.com",
-          "nederland.unofficialbird.com",
-          "uk.unofficialbird.com",
-          "n.l5.ca",
-          "nitter.slipfox.xyz",
-          "nitter.soopy.moe",
-          "nitter.qwik.space",
-          "read.whatever.social",
-          "nitter.rawbit.ninja",
-          "nt.vern.cc",
-          "ntr.odyssey346.dev",
-          "nitter.ir",
-          "nitter.privacytools.io",
-          "nitter.sneed.network",
-          "n.sneed.network",
-          "nitter.manasiwibi.com",
-          "nitter.smnz.de",
-          "nitter.twei.space",
-          "nitter.inpt.fr",
-          "nitter.d420.de",
-          "nitter.caioalonso.com",
-          "nitter.at",
-          "nitter.drivet.xyz",
-          "nitter.pw",
-          "nitter.nicfab.eu",
-          "bird.habedieeh.re"
+          "nitter.privacyredirect.com",
+          "nitter.tiekoetter.com",
+          "nuku.trabun.org",
+          "nitter.catsarch.com",
+          "nitter.kareem.one"
         ]
       }
     ]
@@ -364,20 +260,27 @@
       {
         "name": "wikiless",
         "instances": [
-          "wikiless.org",
-          "wikiless.sethforprivacy.com",
-          "wiki.604kph.xyz",
-          "wikiless.lunar.icu",
           "wiki.froth.zone",
           "wikiless.northboot.xyz",
           "wikiless.tiekoetter.com",
-          "wikiless.esmailelbob.xyz",
-          "wiki.slipfox.xyz",
-          "wikiless.funami.tech",
           "wl.vern.cc",
-          "wiki.privacytools.io",
           "wikiless.rawbit.ninja",
-          "wiki.adminforge.de"
+          "wikiless.funami.tech",
+          "wiki.adminforge.de",
+          "wiki.owo.si",
+          "w.sneed.network",
+          "wikiless.r4fo.com",
+          "wiki.seitan-ayoub.lol"
+        ]
+      },
+      {
+        "name": "wikimore",
+        "instances": [
+          "wikimore.private.coffee",
+          "wm.bloat.cat",
+          "wp.dc09.ru",
+          "wikimore.privadency.com",
+          "wikimore.blitzw.in"
         ]
       }
     ]
@@ -390,69 +293,36 @@
       {
         "name": "invidious",
         "instances": [
-          "yewtu.be",
-          "vid.puffyan.us",
-          "invidious.snopyta.org",
-          "invidious.kavin.rocks",
-          "inv.riverside.rocks",
-          "invidio.xamh.de",
-          "y.com.sb",
-          "invidious.sethforprivacy.com",
-          "yt.artemislena.eu",
-          "invidious.tiekoetter.com",
-          "inv.bp.projectsegfau.lt",
+          "inv.nadeko.net",
           "invidious.nerdvpn.de",
-          "inv.vern.cc",
-          "invidious.projectsegfau.lt",
-          "invidious.rhyshl.live",
-          "inv.odyssey346.dev",
-          "invidious.slipfox.xyz",
-          "invidious.baczek.me",
-          "invidious.esmailelbob.xyz",
-          "youtube.076.ne.jp",
-          "invidious.dhusch.de",
-          "invidious.weblibre.org",
-          "invidious.flokinet.to",
-          "inv.privacy.com.de",
-          "invidious.namazso.eu"
+          "invidious.f5.si",
+          "yt.chocolatemoo53.com",
+          "invidious.tiekoetter.com",
+          "inv-ygg.nadeko.net",
+          "inv.nadeko.ygg"
         ]
       },
       {
         "name": "piped",
         "instances": [
-          "piped.kavin.rocks",
-          "piped.tokhmi.xyz",
-          "piped.moomoo.me",
-          "piped.syncpundit.io",
-          "piped.mha.fi",
-          "pipedus.palash.dev",
-          "watch.whatever.social",
-          "piped.garudalinux.org",
-          "y.rivo.lol",
-          "yt.jae.fi",
-          "piped.mint.lgbt",
-          "il.ax",
-          "piped.projectsegfau.lt",
-          "piped.privacydev.net",
-          "piped.palveluntarjoaja.eu",
-          "piped.smnz.de",
-          "piped.adminforge.de",
-          "watch.whatevertinfoil.de",
-          "piped.qdi.fi"
+          "adminforge.de",
+          "piped.ducks.party",
+          "piped.private.coffee"
         ]
       },
       {
         "name": "pipedMaterial",
         "instances": [
           "piped-material.xn--17b.net",
-          "piped-material.ftp.sh"
+          "piped-material.ftp.sh",
+          "eds-v2.piped.xn--17b.net"
         ]
       },
       {
         "name": "cloudtube",
         "instances": [
-          "https://tube.cadence.moe",
-          "https://tube.boritsch.de"
+          "tube.cadence.moe",
+          "tube.boritsch.de"
         ]
       }
     ]
@@ -463,19 +333,20 @@
     "pattern": "music\\.youtube\\.com",
     "redirect": [
       {
-        "name": "beatbump",
-        "instances": [
-          "beatbump.ml",
-          "beatbump.esmailelbob.xyz"
-        ]
-      },
-      {
         "name": "hyperpipe",
         "instances": [
           "hyperpipe.surge.sh",
-          "hyperpipe.esmailelbob.xyz",
-          "listen.whatever.social",
-          "music.adminforge.de"
+          "music.adminforge.de",
+          "music.pfcd.me",
+          "hyperpipe.frontendfriendly.xyz",
+          "hyperpipe.drgns.space",
+          "hyperpipe.projectsegfau.lt",
+          "hp.ggtyler.dev",
+          "hyperpipe.lunar.icu",
+          "hp.iqbalrifai.eu.org",
+          "hp.ngn.tf",
+          "hyperpipe.ducks.party",
+          "hyperpipe.darkness.services"
         ]
       }
     ]

@@ -1,0 +1,6 @@
+First release of Stealth-Continued:
+- Teddit API only, with HTTP Basic authentication and a setup wizard
+- Search, user lookup and "load more comments" through the instance
+- Custom feeds in the profile drawer
+- No more "Stealth might stop working" banner
+- Android 15 and current libraries
