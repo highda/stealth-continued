@@ -80,3 +80,6 @@ lint/tmp/
 ### Android Patch ###
 gen-external-apklibs
 output.json
+
+# Local maintainer notes
+HANDOFF.md

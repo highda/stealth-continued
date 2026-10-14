@@ -8,6 +8,7 @@ First release of Stealth-Continued, a fork of Stealth 2.3.1.
 - Custom feeds: named sets of subreddits per profile, in the profile drawer
 - "Add to a feed" on subreddit pages
 - Custom feeds in backups
+- A notice when NSFW results are hidden, with a button to show them
 
 ### Changed
 - The Teddit API is the only source; the Reddit and web scraping sources are gone
@@ -25,6 +26,7 @@ First release of Stealth-Continued, a fork of Stealth 2.3.1.
 
 ### Fixed
 - Comments that fail to load are no longer dropped from "More"
+- Content scrolling visibly under the status bar on Android 15+
 
 # 2.3.1 - 2025/06/01
 

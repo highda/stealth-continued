@@ -146,6 +146,8 @@ dependencies {
     implementation("com.drakeet.drawer:drawer:${Dependencies.Versions.drawer}")
 
     testImplementation("junit:junit:${Dependencies.Versions.jUnit}")
+    // The real org.json (Android's is a stub in JVM unit tests)
+    testImplementation("org.json:json:20240303")
 
     androidTestImplementation("androidx.test:runner:${Dependencies.Versions.testRunner}")
     androidTestImplementation("androidx.test.ext:junit:${Dependencies.Versions.test}")

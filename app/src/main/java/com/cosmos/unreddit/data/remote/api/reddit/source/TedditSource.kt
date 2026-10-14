@@ -129,8 +129,9 @@ class TedditSource @Inject constructor(
             // The focused comment has depth 0 and its replies 1; the stub sits at `depth`.
             parent?.replies()?.filter { it.id() in children }?.forEach { reply ->
                 flatten(reply, depth - 1, things)
-                found.add(reply.id().orEmpty())
             }
+            // Descendants listed in the stub came with their ancestors
+            things.forEach { found.add(((it as? Map<*, *>)?.get("data") as? Map<*, *>)?.get("id") as? String ?: "") }
         }
 
         val missing = children.filterNot { it in found }
