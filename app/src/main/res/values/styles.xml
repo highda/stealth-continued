@@ -243,6 +243,21 @@
 
     <style name="SubscriptionsCardStyle" parent="CardStyle"/>
 
+    <!-- Custom feeds -->
+
+    <style name="TextAppearanceSectionTitle" parent="TextAppearanceCategory">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearanceFeedName" parent="">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearanceFeedInfo" parent="">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/text_color_post_info</item>
+    </style>
+
     <!-- Search -->
 
     <style name="TextAppearanceSearchSubreddit" parent="">

@@ -7,6 +7,7 @@ import com.cosmos.unreddit.data.local.mapper.PostMapper2
 import com.cosmos.unreddit.data.model.Data
 import com.cosmos.unreddit.data.model.Sort
 import com.cosmos.unreddit.data.model.Sorting
+import com.cosmos.unreddit.data.model.db.FeedWithSubreddits
 import com.cosmos.unreddit.data.model.db.PostEntity
 import com.cosmos.unreddit.data.model.db.Profile
 import com.cosmos.unreddit.data.model.preferences.ContentPreferences
@@ -17,6 +18,7 @@ import com.cosmos.unreddit.ui.base.BaseViewModel
 import com.cosmos.unreddit.util.PostUtil
 import com.cosmos.unreddit.util.extension.updateValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,12 +29,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class PostListViewModel
@@ -51,15 +53,29 @@ class PostListViewModel
     private val _sorting: MutableStateFlow<Sorting> = MutableStateFlow(DEFAULT_SORTING)
     val sorting: StateFlow<Sorting> = _sorting
 
-    val subreddit: Flow<List<String>> = subscriptionsNames
-        .distinctUntilChanged()
-        .map { subscriptions ->
-            if (subscriptions.isNotEmpty()) {
-                subscriptions.shuffled()
-            } else {
-                listOf(DEFAULT_SUBREDDIT)
-            }
+    val feeds: Flow<List<FeedWithSubreddits>> = currentProfile.flatMapLatest {
+        repository.getFeeds(it.id)
+    }
+
+    /** The custom feed shown instead of the subscriptions, or null for the home feed. */
+    private val _selectedFeedId: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val selectedFeedId: StateFlow<Int?> = _selectedFeedId
+
+    val selectedFeed: Flow<FeedWithSubreddits?> = _selectedFeedId.flatMapLatest { id ->
+        if (id == null) flowOf(null) else repository.getFeed(id)
+    }
+
+    val subreddit: Flow<List<String>> = combine(
+        subscriptionsNames.distinctUntilChanged(),
+        selectedFeed.map { it?.names }.distinctUntilChanged()
+    ) { subscriptions, feed ->
+        when {
+            // An empty custom feed shows nothing, not r/popular
+            feed != null -> feed
+            subscriptions.isNotEmpty() -> subscriptions.shuffled()
+            else -> listOf(DEFAULT_SUBREDDIT)
         }
+    }
         .flowOn(defaultDispatcher)
 
     val postDataFlow: Flow<PagingData<PostEntity>>
@@ -102,6 +118,7 @@ class PostListViewModel
     }
 
     private fun getPosts(data: Data.FetchMultiple, user: Data.User): Flow<PagingData<PostEntity>> {
+        if (data.query.isEmpty()) return flowOf(PagingData.empty())
         return repository.getPosts(data.query, data.sorting)
             .map { pagingData ->
                 PostUtil.filterPosts(pagingData, latestUser ?: user, postMapper, defaultDispatcher)
@@ -113,9 +130,14 @@ class PostListViewModel
     }
 
     fun selectProfile(profile: Profile) {
+        _selectedFeedId.value = null
         viewModelScope.launch {
             preferencesRepository.setCurrentProfile(profile.id)
         }
+    }
+
+    fun selectFeed(feedId: Int?) {
+        _selectedFeedId.value = feedId
     }
 
     companion object {

@@ -10,11 +10,10 @@
     </data>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/profile_home_item_width"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginVertical="8dp"
-        tools:layout_width="92dp">
+        android:layout_marginVertical="8dp">
 
         <com.cosmos.unreddit.ui.common.widget.AvatarView
             android:id="@+id/profile_avatar"
@@ -33,6 +32,8 @@
             app:layout_constraintTop_toBottomOf="@id/profile_avatar"
             app:layout_constraintBottom_toBottomOf="parent"
             android:gravity="center"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:layout_marginTop="@dimen/profile_name_margin"
             android:text="@{profile.name}"
             tools:text="Profile"/>

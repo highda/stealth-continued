@@ -124,6 +124,8 @@ class SmartPostListDataSource(
     }
 
     companion object {
-        private const val REDDIT_SUBREDDIT_LIMIT = 100
+        // Multi-subreddit listings are searches (see TedditSource.getSubreddit), and Reddit caps
+        // search queries at 512 characters: up to 14 names of 21 characters with " OR subreddit:"
+        private const val REDDIT_SUBREDDIT_LIMIT = 14
     }
 }

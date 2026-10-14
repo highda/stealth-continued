@@ -49,7 +49,36 @@ class TedditSource @Inject constructor(
         timeSorting: TimeSorting?,
         after: String? = null
     ): Listing {
+        if (subreddit.contains('+')) return getMultiSubreddit(subreddit.split('+'), sort, timeSorting, after)
         return tedditApi.getSubreddit(subreddit, sort, timeSorting, after)
+    }
+
+    /**
+     * Posts from several subreddits (subscriptions, custom feeds).
+     *
+     * redlib-tor-api forwards `/r/a+b` to Reddit with a literal `+`, which Reddit reads as a
+     * space and answers with r/popular. A search restricted to the subreddits returns the same
+     * posts in one request, minus stickied posts; search has no rising or controversial sort,
+     * so those fall back to hot and top.
+     */
+    private suspend fun getMultiSubreddit(
+        subreddits: List<String>,
+        sort: Sort,
+        timeSorting: TimeSorting?,
+        after: String?
+    ): Listing {
+        val query = subreddits.joinToString(" OR ") { "subreddit:$it" }
+        val searchSort = when (sort) {
+            Sort.NEW, Sort.TOP, Sort.COMMENTS -> sort
+            Sort.CONTROVERSIAL -> Sort.TOP
+            else -> Sort.HOT
+        }
+        val time = if (searchSort == Sort.TOP) timeSorting ?: TimeSorting.DAY else TimeSorting.ALL
+        val listing = tedditApi.searchPost(query, searchSort, time, after)
+        if (listing.data.children.isNotEmpty() || listing.data.after != null) return listing
+        // Reddit's search now and then answers with nothing, and Redlib caches that for a while;
+        // ask once more with a different URL (an explicit default limit) to get past the cache
+        return tedditApi.searchPost(query, searchSort, time, after, limit = SEARCH_LIMIT)
     }
 
     suspend fun getSubredditInfo(subreddit: String): Child {
@@ -107,24 +136,46 @@ class TedditSource @Inject constructor(
         val missing = children.filterNot { it in found }
         if (missing.isNotEmpty()) {
             val semaphore = Semaphore(MORE_PARALLELISM)
-            val threads = coroutineScope {
+            val results = coroutineScope {
                 missing.map { id ->
                     async {
                         semaphore.withPermit {
                             try {
-                                getThread(postId, id, sort).firstOrNull()
+                                Result.success(getThread(postId, id, sort).firstOrNull())
                             } catch (e: HttpException) {
                                 // Deleted or removed comments answer 404; skip them
-                                if (e.code() == 404) null else throw e
+                                if (e.code() == 404) Result.success(null) else Result.failure(e)
+                            } catch (e: IOException) {
+                                Result.failure(e)
                             }
                         }
                     }
                 }.awaitAll()
             }
-            threads.filterNotNull()
+            if (results.all { it.isFailure }) throw results.first().exceptionOrNull()!!
+
+            results.mapNotNull { it.getOrNull() }
                 // Reddit lists descendants in a stub too; they come with their ancestors
                 .filter { it.data()?.get("parent_id") == parentId }
                 .forEach { flatten(it, depth, things) }
+
+            // Comments that failed (rate limit, network) come back as a new "more" stub
+            val failed = missing.filterIndexed { index, _ -> results[index].isFailure }
+            if (failed.isNotEmpty()) {
+                things.add(
+                    mapOf(
+                        "kind" to "more",
+                        "data" to mapOf(
+                            "count" to failed.size,
+                            "name" to "t1_${failed.first()}_retry",
+                            "id" to "${failed.first()}_retry",
+                            "parent_id" to parentId,
+                            "depth" to depth,
+                            "children" to failed
+                        )
+                    )
+                )
+            }
         }
 
         val parsed = childListAdapter.fromJsonValue(things) ?: throw IOException()
@@ -245,6 +296,8 @@ class TedditSource @Inject constructor(
 
     companion object {
         private const val MORE_PARALLELISM = 4
+
+        private const val SEARCH_LIMIT = 25
 
         private val USERNAME = Regex("^[A-Za-z0-9_-]{3,20}$")
     }

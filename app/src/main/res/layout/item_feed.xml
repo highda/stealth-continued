@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_feed"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    android:layout_marginHorizontal="4dp"
+    app:strokeColor="?attr/colorPrimary"
+    style="@style/SubscriptionsCardStyle">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_background"
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <FrameLayout
+            android:layout_width="@dimen/profile_home_size"
+            android:layout_height="@dimen/profile_home_size">
+
+            <com.cosmos.unreddit.ui.common.widget.AvatarView
+                android:id="@+id/feed_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:text="F"/>
+
+            <ImageView
+                android:id="@+id/feed_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="6dp"
+                android:contentDescription="@null"
+                android:visibility="gone"
+                app:tint="?attr/colorPrimary"
+                tools:src="@drawable/ic_home"/>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/feed_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearanceFeedName"
+                tools:text="Feed"/>
+
+            <TextView
+                android:id="@+id/feed_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearanceFeedInfo"
+                tools:text="rust, linux, android"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -78,7 +78,8 @@ interface TedditApi {
         @Query("q") query: String,
         @Query("sort") sort: Sort?,
         @Query("t") timeSorting: TimeSorting?,
-        @Query("after") after: String? = null
+        @Query("after") after: String? = null,
+        @Query("limit") limit: Int? = null
     ): Listing
 
     @GET("/subreddits/search?api&nsfw=on")

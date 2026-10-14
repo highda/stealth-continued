@@ -25,6 +25,7 @@ import com.cosmos.unreddit.databinding.FragmentPostBinding
 import com.cosmos.unreddit.ui.base.BaseFragment
 import com.cosmos.unreddit.ui.common.widget.PullToRefreshLayout
 import com.cosmos.unreddit.ui.common.widget.PullToRefreshView
+import com.cosmos.unreddit.ui.feed.FeedEditDialogFragment
 import com.cosmos.unreddit.ui.loadstate.NetworkLoadStateAdapter
 import com.cosmos.unreddit.ui.sort.SortFragment
 import com.cosmos.unreddit.util.DateUtil
@@ -41,9 +42,10 @@ import com.cosmos.unreddit.util.extension.setNavigationListener
 import com.cosmos.unreddit.util.extension.setSortingListener
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
@@ -83,6 +85,8 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
     private lateinit var postListAdapter: PostListAdapter
 
     private lateinit var profileAdapter: ProfileAdapter
+
+    private lateinit var feedAdapter: FeedAdapter
 
     @Inject
     lateinit var repository: PostListRepository
@@ -176,6 +180,24 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
                     binding.appBar.profileImage.setText(it.name)
                 }
             }
+
+            launch {
+                combine(viewModel.feeds, viewModel.selectedFeedId) { feeds, selected ->
+                    feeds to selected
+                }.collect { (feeds, selected) ->
+                    feedAdapter.submit(feeds, selected)
+                }
+            }
+
+            launch {
+                viewModel.selectedFeed.collect { feed ->
+                    if (feed == null && viewModel.selectedFeedId.value != null) {
+                        // The selected feed was deleted
+                        viewModel.selectFeed(null)
+                    }
+                    binding.appBar.title.text = feed?.feed?.name ?: getString(R.string.app_name)
+                }
+            }
             
             launch { 
                 viewModel.lastRefresh.collect {
@@ -207,8 +229,19 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
         profileAdapter = ProfileAdapter { onProfileClick(it) }
 
         binding.listProfiles.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = profileAdapter
+        }
+
+        feedAdapter = FeedAdapter(
+            onClick = { onFeedClick(it?.feed?.id) },
+            onLongClick = { FeedEditDialogFragment.show(childFragmentManager, it.feed.id) }
+        )
+
+        binding.listFeeds.adapter = feedAdapter
+
+        binding.buttonAddFeed.setOnClickListener {
+            FeedEditDialogFragment.show(childFragmentManager)
         }
 
         // Restore container view when drawer was open before
@@ -281,6 +314,16 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
     private fun initResultListener() {
         setSortingListener { sorting -> sorting?.let { viewModel.setSorting(it) } }
 
+        childFragmentManager.setFragmentResultListener(
+            FeedEditDialogFragment.REQUEST_KEY_FEED,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            // Show a feed right after creating or editing it
+            if (bundle.containsKey(FeedEditDialogFragment.KEY_FEED_ID)) {
+                onFeedClick(bundle.getInt(FeedEditDialogFragment.KEY_FEED_ID))
+            }
+        }
+
         setNavigationListener { showNavigation ->
             uiViewModel.setNavigationVisibility(showNavigation && onOffsetChangedListener.visible)
         }
@@ -317,6 +360,12 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
         binding.drawerLayout.closeDrawer(GravityCompat.START)
     }
 
+    private fun onFeedClick(feedId: Int?) {
+        viewModel.selectFeed(feedId)
+        closeProfileDrawer()
+        binding.appBarLayout.setExpanded(true)
+    }
+
     private fun onProfileClick(profile: Profile) {
         viewModel.selectProfile(profile)
         closeProfileDrawer()
@@ -338,6 +387,7 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
 
     override fun onStop() {
         super.onStop()
+        childFragmentManager.clearFragmentResultListener(FeedEditDialogFragment.REQUEST_KEY_FEED)
         clearSortingListener()
         clearNavigationListener()
     }

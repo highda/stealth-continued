@@ -9,6 +9,8 @@ import com.cosmos.unreddit.data.model.Sorting
 import com.cosmos.unreddit.data.model.db.History
 import com.cosmos.unreddit.data.model.db.PostEntity
 import com.cosmos.unreddit.data.model.db.Profile
+import com.cosmos.unreddit.data.model.db.FeedSubreddit
+import com.cosmos.unreddit.data.model.db.FeedWithSubreddits
 import com.cosmos.unreddit.data.model.db.Subscription
 import com.cosmos.unreddit.data.remote.api.reddit.model.AboutChild
 import com.cosmos.unreddit.data.remote.api.reddit.model.AboutUserChild
@@ -110,6 +112,34 @@ class PostListRepository @Inject constructor(
 
     suspend fun unsubscribe(name: String, profileId: Int) {
         redditDatabase.subscriptionDao().deleteFromNameAndProfile(name, profileId)
+    }
+
+    //endregion
+
+    //region Custom feeds
+
+    fun getFeeds(profileId: Int): Flow<List<FeedWithSubreddits>> = redditDatabase
+        .feedDao().getFeedsFromProfile(profileId).distinctUntilChanged()
+
+    fun getFeed(feedId: Int): Flow<FeedWithSubreddits?> = redditDatabase
+        .feedDao().getFeed(feedId).distinctUntilChanged()
+
+    suspend fun saveFeed(feedId: Int?, name: String, subreddits: List<String>, profileId: Int): Int {
+        return redditDatabase.feedDao().save(feedId, name, subreddits, profileId)
+    }
+
+    suspend fun deleteFeed(feedId: Int) {
+        redditDatabase.feedDao().delete(feedId)
+    }
+
+    suspend fun addToFeed(feedId: Int, subreddit: String) {
+        redditDatabase.feedDao().insertSubreddits(
+            listOf(FeedSubreddit(feedId, subreddit, System.currentTimeMillis()))
+        )
+    }
+
+    suspend fun removeFromFeed(feedId: Int, subreddit: String) {
+        redditDatabase.feedDao().deleteSubreddit(feedId, subreddit)
     }
 
     //endregion

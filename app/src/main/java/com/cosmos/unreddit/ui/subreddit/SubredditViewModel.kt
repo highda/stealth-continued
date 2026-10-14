@@ -9,6 +9,7 @@ import com.cosmos.unreddit.data.model.Data
 import com.cosmos.unreddit.data.model.Resource
 import com.cosmos.unreddit.data.model.Sort
 import com.cosmos.unreddit.data.model.Sorting
+import com.cosmos.unreddit.data.model.db.FeedWithSubreddits
 import com.cosmos.unreddit.data.model.db.PostEntity
 import com.cosmos.unreddit.data.model.db.SubredditEntity
 import com.cosmos.unreddit.data.model.preferences.ContentPreferences
@@ -20,6 +21,8 @@ import com.cosmos.unreddit.util.PostUtil
 import com.cosmos.unreddit.util.extension.latest
 import com.cosmos.unreddit.util.extension.updateValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.IOException
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +33,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -38,8 +42,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-import java.io.IOException
-import javax.inject.Inject
 
 @HiltViewModel
 class SubredditViewModel @Inject constructor(
@@ -189,6 +191,21 @@ class SubredditViewModel @Inject constructor(
                 } else {
                     repository.subscribe(subredditName, it.id, icon)
                 }
+            }
+        }
+    }
+
+    /** The current profile's custom feeds. */
+    suspend fun getFeeds(): List<FeedWithSubreddits> {
+        return repository.getFeeds(currentProfile.first().id).first()
+    }
+
+    /** Adds the subreddit to (true) or removes it from (false) the given feeds. */
+    fun updateFeeds(changes: Map<Int, Boolean>) {
+        val name = _subreddit.value
+        viewModelScope.launch {
+            changes.forEach { (feedId, add) ->
+                if (add) repository.addToFeed(feedId, name) else repository.removeFromFeed(feedId, name)
             }
         }
     }

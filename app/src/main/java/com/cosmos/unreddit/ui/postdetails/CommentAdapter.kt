@@ -220,7 +220,15 @@ class CommentAdapter(
                 notifyItemChanged(position)
             }
             .catch {
-                comment.apply { isLoading = false; isError = true }
+                comment.apply {
+                    isLoading = false
+                    isError = true
+                    // Put the requested comments back, so that a retry asks for them again
+                    if (containsMoreComments) {
+                        more.addAll(0, children)
+                        count += children.size
+                    }
+                }
                 notifyItemChanged(position)
             }
             .collect { comments ->
@@ -429,7 +437,7 @@ class CommentAdapter(
 
     companion object {
         const val LOAD_MORE_LIMIT = 100
-        const val LOAD_MORE_TOP_LIMIT = 10
+        const val LOAD_MORE_TOP_LIMIT = 8
         const val COMMENT_DEPTH_LIMIT = 10
 
         private val COMMENT_COMPARATOR = object : DiffUtil.ItemCallback<Comment>() {

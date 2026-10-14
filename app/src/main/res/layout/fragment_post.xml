@@ -84,21 +84,62 @@
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </androidx.cardview.widget.CardView>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/navigation_view"
         android:background="?attr/colorSurface"
-        android:layout_width="@dimen/profile_home_drawer_width"
+        android:layout_width="@dimen/feed_drawer_width"
         android:layout_height="match_parent"
-        android:layout_gravity="start">
+        android:layout_gravity="start"
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_profiles"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            android:clipToPadding="true"
-            android:overScrollMode="never"/>
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="8dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-    </FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/feeds_title"
+                android:textAppearance="@style/TextAppearanceSectionTitle"/>
+
+            <com.cosmos.unreddit.ui.common.widget.CardButton
+                android:id="@+id/button_add_feed"
+                android:layout_width="@dimen/app_bar_button_size"
+                android:layout_height="@dimen/app_bar_button_size"
+                android:contentDescription="@string/feed_new"
+                app:icon="@drawable/ic_add"
+                style="@style/CardButtonStyle"/>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_feeds"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="8dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+    </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -288,4 +288,22 @@
     <string name="instance_hint">Instance</string>
     <string name="instance_empty_error">Instance cannot be empty</string>
     <string name="instance_invalid_error">Instance URL is invalid</string>
+
+    <!-- Custom feeds -->
+    <string name="feeds_title">Feeds</string>
+    <string name="feed_home">Home</string>
+    <string name="feed_home_info">Your subscriptions</string>
+    <string name="feed_new">New feed</string>
+    <string name="feed_edit">Edit feed</string>
+    <string name="feed_delete">Delete</string>
+    <string name="feed_delete_message">Delete the feed \"%1$s\"? Its subreddits stay in your subscriptions.</string>
+    <string name="feed_empty">No subreddits yet</string>
+    <string name="feed_empty_message">This feed has no subreddits yet.\nLong-press it in the drawer to add some.</string>
+    <string name="feed_name_hint">Name</string>
+    <string name="feed_name_empty">Give the feed a name</string>
+    <string name="feed_subreddit_hint">Add a subreddit</string>
+    <string name="feed_subreddit_add">Add</string>
+    <string name="feed_subreddit_invalid">Not a valid subreddit name</string>
+    <string name="feed_add_to">Add to a feed</string>
+    <string name="subreddit_prefixed">r/%1$s</string>
 </resources>

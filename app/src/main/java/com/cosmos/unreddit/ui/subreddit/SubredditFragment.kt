@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cosmos.unreddit.R
@@ -29,6 +30,7 @@ import com.cosmos.unreddit.databinding.LayoutSubredditContentBinding
 import com.cosmos.unreddit.ui.base.BaseFragment
 import com.cosmos.unreddit.ui.common.widget.PullToRefreshLayout
 import com.cosmos.unreddit.ui.common.widget.PullToRefreshView
+import com.cosmos.unreddit.ui.feed.FeedEditDialogFragment
 import com.cosmos.unreddit.ui.loadstate.NetworkLoadStateAdapter
 import com.cosmos.unreddit.ui.postlist.PostListAdapter
 import com.cosmos.unreddit.ui.postmenu.PostMenuFragment
@@ -46,9 +48,9 @@ import com.cosmos.unreddit.util.extension.setSortingListener
 import com.cosmos.unreddit.util.extension.toPixels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SubredditFragment : BaseFragment(), PopupMenu.OnMenuItemClickListener,
@@ -375,6 +377,42 @@ class SubredditFragment : BaseFragment(), PopupMenu.OnMenuItemClickListener,
             .show()
     }
 
+    private fun showAddToFeedDialog() {
+        val subreddit = viewModel.subreddit.value
+        viewLifecycleOwner.lifecycleScope.launch {
+            val feeds = viewModel.getFeeds()
+            if (feeds.isEmpty()) {
+                // Nothing to choose from: start a new feed with this subreddit
+                FeedEditDialogFragment.show(childFragmentManager, subreddit = subreddit)
+                return@launch
+            }
+
+            val initial = feeds.map { feed -> feed.names.any { it.equals(subreddit, true) } }
+            val checked = initial.toBooleanArray()
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.feed_add_to)
+                .setMultiChoiceItems(
+                    feeds.map { it.feed.name }.toTypedArray(),
+                    checked
+                ) { _, which, isChecked ->
+                    checked[which] = isChecked
+                }
+                .setPositiveButton(R.string.save) { _, _ ->
+                    viewModel.updateFeeds(
+                        feeds.indices
+                            .filter { checked[it] != initial[it] }
+                            .associate { feeds[it].feed.id to checked[it] }
+                    )
+                }
+                .setNeutralButton(R.string.feed_new) { _, _ ->
+                    FeedEditDialogFragment.show(childFragmentManager, subreddit = subreddit)
+                }
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .show()
+        }
+    }
+
     private fun openDrawer() {
         binding.drawerLayout.openDrawer(GravityCompat.END)
     }
@@ -392,6 +430,7 @@ class SubredditFragment : BaseFragment(), PopupMenu.OnMenuItemClickListener,
         when (menuItem.itemId) {
             R.id.search -> showSearchFragment()
             R.id.sidebar -> openDrawer()
+            R.id.add_to_feed -> showAddToFeedDialog()
             else -> {
                 return false
             }

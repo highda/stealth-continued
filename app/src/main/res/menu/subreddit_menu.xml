@@ -6,4 +6,7 @@
 
     <item android:id="@+id/sidebar"
         android:title="@string/menu_sidebar" />
+
+    <item android:id="@+id/add_to_feed"
+        android:title="@string/feed_add_to" />
 </menu>
