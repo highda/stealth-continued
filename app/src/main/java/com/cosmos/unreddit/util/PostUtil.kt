@@ -28,7 +28,7 @@ object PostUtil {
         pagingData
             .map { postMapper.dataToEntity((it as PostChild).data) }
             .filter { post ->
-                user.contentPreferences.showNsfw || !post.isOver18
+                NsfwNotifier.keep(user.contentPreferences.showNsfw, post.isOver18)
             }
             .map { post ->
                 post.apply {

@@ -1,6 +1,7 @@
 package com.cosmos.unreddit
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.Gravity
 import android.view.ViewGroup
 import androidx.activity.viewModels
@@ -23,6 +24,7 @@ import com.cosmos.unreddit.databinding.ActivityMainBinding
 import com.cosmos.unreddit.ui.instance.InstanceDialogFragment
 import com.cosmos.unreddit.ui.postlist.PostListFragment
 import com.cosmos.unreddit.util.HideBottomViewBehavior
+import com.cosmos.unreddit.util.NsfwNotifier
 import com.cosmos.unreddit.util.extension.clearWindowInsetsListener
 import com.cosmos.unreddit.util.extension.currentNavigationFragment
 import com.cosmos.unreddit.util.extension.launchRepeat
@@ -30,10 +32,11 @@ import com.cosmos.unreddit.util.extension.unredditApplication
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
@@ -60,6 +63,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         initNavigation()
         initInstanceSetup()
+        initStatusBarScrim()
 
         launchRepeat(Lifecycle.State.STARTED) {
             launch {
@@ -67,6 +71,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     // Drop the first item to let initBottomNavigationView manage the visibility
                     .drop(1)
                     .collect(this@MainActivity::showNavigation)
+            }
+
+            launch {
+                NsfwNotifier.hidden.collect { showNsfwHiddenSnackbar() }
             }
 
             launch {
@@ -98,6 +106,28 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     }
                 }
             }
+        }
+    }
+
+    private var lastNsfwSnackbar = 0L
+
+    /** Tells the user that NSFW results were hidden, at most once a minute. */
+    private fun showNsfwHiddenSnackbar() {
+        val now = SystemClock.elapsedRealtime()
+        if (lastNsfwSnackbar != 0L && now - lastNsfwSnackbar < NSFW_SNACKBAR_INTERVAL) return
+        lastNsfwSnackbar = now
+
+        Snackbar.make(binding.root, R.string.nsfw_hidden_message, Snackbar.LENGTH_LONG)
+            .setAction(R.string.nsfw_hidden_action) { viewModel.showNsfw() }
+            .apply { if (binding.bottomNavigation.isShown) anchorView = binding.bottomNavigation }
+            .show()
+    }
+
+    private fun initStatusBarScrim() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.statusBarScrim) { view, windowInsets ->
+            val top = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.updateLayoutParams<ViewGroup.LayoutParams> { height = top }
+            windowInsets
         }
     }
 
@@ -206,6 +236,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     override fun onDestroy() {
         super.onDestroy()
         bottomNavigationState = NOT_INITIALIZED
+    }
+
+    companion object {
+        private const val NSFW_SNACKBAR_INTERVAL = 60_000L
     }
 
     private enum class BottomNavigationState {

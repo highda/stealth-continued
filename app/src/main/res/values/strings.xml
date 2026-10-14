@@ -310,4 +310,8 @@
     <string name="about_source_code">Source code</string>
     <string name="contributor_cosmosdev_description">Created Stealth. Stealth-Continued is a fork of it.</string>
     <string name="contributor_highda_description">Maintains Stealth-Continued</string>
+
+    <!-- NSFW notice -->
+    <string name="nsfw_hidden_message">Some NSFW results are hidden</string>
+    <string name="nsfw_hidden_action">Show</string>
 </resources>

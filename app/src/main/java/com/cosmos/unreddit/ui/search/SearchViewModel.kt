@@ -22,9 +22,11 @@ import com.cosmos.unreddit.data.repository.PostListRepository
 import com.cosmos.unreddit.data.repository.PreferencesRepository
 import com.cosmos.unreddit.di.DispatchersModule
 import com.cosmos.unreddit.ui.base.BaseViewModel
+import com.cosmos.unreddit.util.NsfwNotifier
 import com.cosmos.unreddit.util.PostUtil
 import com.cosmos.unreddit.util.extension.updateValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +41,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
@@ -134,7 +135,7 @@ class SearchViewModel @Inject constructor(
             .map { pagingData ->
                 pagingData
                     .map { subredditMapper.dataToEntity((it as AboutChild).data) }
-                    .filter { user.contentPreferences.showNsfw || !it.over18 }
+                    .filter { NsfwNotifier.keep(user.contentPreferences.showNsfw, it.over18) }
             }
             .flowOn(defaultDispatcher)
     }
@@ -147,7 +148,7 @@ class SearchViewModel @Inject constructor(
             .map { pagingData ->
                 pagingData
                     .map { userMapper.dataToEntity((it as AboutUserChild).data) }
-                    .filter { user.contentPreferences.showNsfw || !it.over18 }
+                    .filter { NsfwNotifier.keep(user.contentPreferences.showNsfw, it.over18) }
             }
             .flowOn(defaultDispatcher)
     }
