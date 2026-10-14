@@ -11,6 +11,7 @@ import com.cosmos.unreddit.data.model.db.FeedWithSubreddits
 import com.cosmos.unreddit.data.model.db.PostEntity
 import com.cosmos.unreddit.data.model.db.Profile
 import com.cosmos.unreddit.data.model.preferences.ContentPreferences
+import com.cosmos.unreddit.data.remote.instance.InstanceManager
 import com.cosmos.unreddit.data.repository.PostListRepository
 import com.cosmos.unreddit.data.repository.PreferencesRepository
 import com.cosmos.unreddit.di.DispatchersModule.DefaultDispatcher
@@ -42,6 +43,7 @@ class PostListViewModel
     private val repository: PostListRepository,
     private val preferencesRepository: PreferencesRepository,
     private val postMapper: PostMapper2,
+    instanceManager: InstanceManager,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : BaseViewModel(preferencesRepository, repository) {
 
@@ -82,9 +84,11 @@ class PostListViewModel
 
     val fetchData: StateFlow<Data.FetchMultiple> = combine(
         subreddit,
-        sorting
-    ) { subreddit, sorting ->
-        Data.FetchMultiple(subreddit, sorting)
+        sorting,
+        // Reload when the instance is set up or changed
+        instanceManager.instance
+    ) { subreddit, sorting, instance ->
+        Data.FetchMultiple(subreddit, sorting, instance)
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),

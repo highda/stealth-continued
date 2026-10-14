@@ -3,6 +3,7 @@ package com.cosmos.unreddit.ui.instance
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -96,6 +97,8 @@ class InstanceDialogFragment : DialogFragment(), DialogInterface.OnShowListener 
 
     override fun onShow(dialog: DialogInterface?) {
         (dialog as? AlertDialog)?.run {
+            // Keep the buttons above the keyboard
+            window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener { save() }
             getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener { test(saveAfter = false) }
             getButton(DialogInterface.BUTTON_NEGATIVE)?.setOnClickListener { dismiss() }

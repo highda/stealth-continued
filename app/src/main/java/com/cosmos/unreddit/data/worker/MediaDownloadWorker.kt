@@ -120,7 +120,7 @@ class MediaDownloadWorker @AssistedInject constructor (
                         .setStyle(
                             NotificationCompat.BigPictureStyle()
                                 .bigPicture(bitmap)
-                                .bigLargeIcon(null)
+                                .bigLargeIcon(null as Bitmap?)
                         )
                 }
 

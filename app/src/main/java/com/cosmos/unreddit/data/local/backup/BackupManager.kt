@@ -6,6 +6,7 @@ import com.cosmos.unreddit.data.local.mapper.BackupCommentMapper
 import com.cosmos.unreddit.data.local.mapper.BackupPostMapper
 import com.cosmos.unreddit.data.local.mapper.ProfileMapper
 import com.cosmos.unreddit.data.local.mapper.SubscriptionMapper
+import com.cosmos.unreddit.data.model.backup.Feed
 import com.cosmos.unreddit.data.model.backup.Profile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -23,8 +24,13 @@ sealed class BackupManager(
 
     protected suspend fun getProfiles(): List<Profile> {
         val profilesWithSubscriptions = redditDatabase.profileDao().getProfilesWithDetails()
+        val feedDao = redditDatabase.feedDao()
 
         return profileMapper.dataToEntities(profilesWithSubscriptions)
+            .zip(profilesWithSubscriptions) { profile, details ->
+                val feeds = feedDao.getFeedsFromProfileOnce(details.profile.id)
+                profile.copy(feeds = feeds.map { Feed(it.feed.name, it.names) })
+            }
     }
 
     protected suspend fun insertProfiles(profiles: List<Profile>) {
@@ -61,6 +67,10 @@ sealed class BackupManager(
                         .let { posts ->
                             postDao.insert(*posts)
                         }
+                }
+
+                profile.feeds?.forEach { feed ->
+                    redditDatabase.feedDao().save(null, feed.name, feed.subreddits, id)
                 }
 
                 profile.savedComments?.let { savedComments ->

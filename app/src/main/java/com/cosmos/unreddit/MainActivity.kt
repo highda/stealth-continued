@@ -101,16 +101,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
     }
 
-    /** Asks for an instance on first launch; nothing can load without one. */
+    /** Asks for an instance on first launch; the home feed loads once it is saved. */
     private fun initInstanceSetup() {
-        supportFragmentManager.setFragmentResultListener(
-            InstanceDialogFragment.REQUEST_KEY_INSTANCE,
-            this
-        ) { _, bundle ->
-            // Reload everything that failed for lack of an instance
-            if (bundle.getBoolean(InstanceDialogFragment.KEY_SETUP)) recreate()
-        }
-
         if (!instanceManager.isConfigured) {
             InstanceDialogFragment.show(supportFragmentManager, setup = true)
         }

@@ -1,12 +1,13 @@
 object Config {
     const val namespace = "com.cosmos.unreddit"
 
-    const val applicationId = "com.cosmos.unreddit"
+    // The fork installs next to Stealth; the code keeps the original namespace
+    const val applicationId = "space.highda.stealth"
 
     const val minSdk = 23
-    const val compileSdk = 33
-    const val targetSdk = 33
+    const val compileSdk = 35
+    const val targetSdk = 35
 
-    const val versionCode = 23
-    const val versionName = "2.3.1"
+    const val versionCode = 24
+    const val versionName = "2.4.0"
 }

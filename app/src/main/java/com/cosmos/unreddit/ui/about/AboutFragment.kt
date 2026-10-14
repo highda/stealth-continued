@@ -1,16 +1,9 @@
 package com.cosmos.unreddit.ui.about
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cosmos.unreddit.BuildConfig
@@ -33,9 +26,7 @@ class AboutFragment : BaseFragment() {
 
     private lateinit var creditAdapter: CreditAdapter
 
-    private val gitlabLink by lazy { getString(R.string.gitlab_link) }
-    private val matrixLink by lazy { getString(R.string.matrix_link) }
-    private val email by lazy { getString(R.string.email) }
+    private val sourceLink by lazy { getString(R.string.source_link) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,9 +84,7 @@ class AboutFragment : BaseFragment() {
     private fun initAppBar() {
         binding.appBar.run {
             backCard.setOnClickListener { onBackPressed() }
-            buttonGitlab.setOnClickListener { linkHandler.openBrowser(gitlabLink) }
-            buttonMatrix.setOnClickListener { linkHandler.openBrowser(matrixLink) }
-            buttonMail.setOnClickListener { sendEmail() }
+            buttonSource.setOnClickListener { linkHandler.openBrowser(sourceLink) }
         }
     }
 
@@ -111,34 +100,6 @@ class AboutFragment : BaseFragment() {
             }
             .setCancelable(true)
             .show()
-    }
-
-    private fun sendEmail() {
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-        }
-
-        val packageManager = activity?.packageManager ?: return
-
-        if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
-        } else {
-            val clipboard =
-                activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-
-            if (clipboard != null) {
-                val clip = ClipData.newPlainText("CosmosDev email", email)
-                clipboard.setPrimaryClip(clip)
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.toast_clipboard_copied_email,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
     }
 
     override fun onDestroyView() {
@@ -311,6 +272,18 @@ class AboutFragment : BaseFragment() {
 
         private val CONTRIBUTORS: List<CreditItem.Contributor> by lazy {
             listOf(
+                CreditItem.Contributor(
+                    "CosmosDev",
+                    "@cosmosapps",
+                    R.string.contributor_cosmosdev_description,
+                    "https://gitlab.com/cosmosapps/stealth"
+                ),
+                CreditItem.Contributor(
+                    "highda",
+                    "@highda",
+                    R.string.contributor_highda_description,
+                    "https://github.com/highda"
+                ),
                 CreditItem.Contributor(
                     "uDEV2019",
                     "@uDEV2019",

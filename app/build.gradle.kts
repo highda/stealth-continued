@@ -72,15 +72,16 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        buildConfig = true
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
         freeCompilerArgs = listOf("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 }
@@ -130,7 +131,7 @@ dependencies {
     kapt("com.squareup.moshi:moshi-kotlin-codegen:${Dependencies.Versions.moshi}")
     implementation("com.squareup.moshi:moshi-adapters:${Dependencies.Versions.moshi}")
 
-    implementation("com.squareup.okio:okio:${Dependencies.Versions.moshi}")
+    implementation("com.squareup.okio:okio:${Dependencies.Versions.okio}")
 
     implementation("io.coil-kt:coil:${Dependencies.Versions.coil}")
     implementation("io.coil-kt:coil-gif:${Dependencies.Versions.coil}")

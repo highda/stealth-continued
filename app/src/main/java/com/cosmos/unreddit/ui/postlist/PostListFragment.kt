@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.cosmos.unreddit.R
 import com.cosmos.unreddit.UiViewModel
 import com.cosmos.unreddit.data.model.db.Profile
+import com.cosmos.unreddit.data.remote.instance.NoInstanceException
 import com.cosmos.unreddit.data.repository.PostListRepository
 import com.cosmos.unreddit.databinding.FragmentPostBinding
 import com.cosmos.unreddit.ui.base.BaseFragment
@@ -278,7 +279,8 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
                 }
 
                 val errorState = loadState.source.refresh as? LoadState.Error
-                errorState?.let {
+                // Without an instance, the setup wizard is showing and explains what to do
+                if (errorState != null && errorState.error !is NoInstanceException) {
                     binding.infoRetry.show()
                 }
             }

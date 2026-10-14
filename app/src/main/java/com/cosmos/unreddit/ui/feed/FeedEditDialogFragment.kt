@@ -3,6 +3,7 @@ package com.cosmos.unreddit.ui.feed
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
@@ -94,6 +95,8 @@ class FeedEditDialogFragment : DialogFragment(), DialogInterface.OnShowListener 
 
     override fun onShow(dialog: DialogInterface?) {
         (dialog as? AlertDialog)?.run {
+            // Keep the buttons above the keyboard
+            window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener { save() }
             getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener { dismiss() }
             getButton(DialogInterface.BUTTON_NEUTRAL)?.setOnClickListener { confirmDelete() }

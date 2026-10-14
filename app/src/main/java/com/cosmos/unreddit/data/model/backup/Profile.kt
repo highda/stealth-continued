@@ -16,4 +16,17 @@ data class Profile(
 
     @Json(name = "saved_comments")
     val savedComments: List<Comment>? = null,
+
+    // Stealth-Continued: absent in Stealth backups, ignored by Stealth
+    @Json(name = "feeds")
+    val feeds: List<Feed>? = null,
+)
+
+@JsonClass(generateAdapter = true)
+data class Feed(
+    @Json(name = "name")
+    val name: String,
+
+    @Json(name = "subreddits")
+    val subreddits: List<String>
 )
