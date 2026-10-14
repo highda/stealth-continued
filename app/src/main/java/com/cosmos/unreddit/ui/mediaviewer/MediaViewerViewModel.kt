@@ -9,6 +9,7 @@ import com.cosmos.unreddit.data.model.MediaType
 import com.cosmos.unreddit.data.model.Resource
 import com.cosmos.unreddit.data.model.Sort
 import com.cosmos.unreddit.data.model.Sorting
+import com.cosmos.unreddit.data.remote.instance.InstanceManager
 import com.cosmos.unreddit.data.repository.ImgurRepository
 import com.cosmos.unreddit.data.repository.PostListRepository
 import com.cosmos.unreddit.data.repository.PreferencesRepository
@@ -20,6 +21,8 @@ import com.cosmos.unreddit.util.LinkUtil.https
 import com.cosmos.unreddit.util.PostUtil
 import com.cosmos.unreddit.util.extension.updateValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.IOException
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,9 +37,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import retrofit2.HttpException
-import java.io.IOException
-import javax.inject.Inject
 
 @HiltViewModel
 class MediaViewerViewModel
@@ -45,6 +47,7 @@ class MediaViewerViewModel
     private val streamableRepository: StreamableRepository,
     private val redgifsRepository: RedgifsRepository,
     private val postListRepository: PostListRepository,
+    private val instanceManager: InstanceManager,
     private val postMapper: PostMapper2,
     private val preferencesRepository: PreferencesRepository,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
@@ -74,7 +77,12 @@ class MediaViewerViewModel
     fun loadMedia(link: String, mediaType: MediaType, forceUpdate: Boolean = false) {
         if (_media.value !is Resource.Success || forceUpdate) {
             viewModelScope.launch {
-                val httpsLink = withContext(defaultDispatcher) { link.https }
+                val httpsLink = withContext(defaultDispatcher) {
+                    // An instance on plain HTTP serves its media on plain HTTP too
+                    val fromInstance = link.toHttpUrlOrNull()
+                        ?.let { instanceManager.current?.serves(it) } == true
+                    if (fromInstance) link else link.https
+                }
                 retrieveMedia(httpsLink, mediaType)
             }
         }

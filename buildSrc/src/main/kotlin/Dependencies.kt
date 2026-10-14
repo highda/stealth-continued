@@ -16,7 +16,10 @@ object Dependencies {
         const val viewpager2 = "1.1.0"
         const val preference = "1.2.1"
 
-        const val navigation = "2.8.5"
+        // Navigation 2.6+ rejects the post screen, which is added to the NavHost's
+        // FragmentManager by hand (BaseFragment.onClick); the Safe Args plugin can be newer
+        const val navigation = "2.5.3"
+        const val navigationPlugin = "2.8.5"
 
         const val room = "2.6.1"
         const val datastore = "1.1.1"

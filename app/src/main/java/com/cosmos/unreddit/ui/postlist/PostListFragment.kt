@@ -197,6 +197,7 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
                         viewModel.selectFeed(null)
                     }
                     binding.appBar.title.text = feed?.feed?.name ?: getString(R.string.app_name)
+                    binding.textEmptyFeed.isVisible = feed != null && feed.subreddits.isEmpty()
                 }
             }
             

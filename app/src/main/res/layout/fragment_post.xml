@@ -65,6 +65,21 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
+                <TextView
+                    android:id="@+id/text_empty_feed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginHorizontal="48dp"
+                    android:gravity="center"
+                    android:text="@string/feed_empty_message"
+                    android:textAppearance="@style/TextAppearanceFeedInfo"
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
+
                 <com.cosmos.unreddit.ui.common.widget.InfoBarView
                     android:id="@+id/info_retry"
                     android:layout_width="match_parent"
@@ -108,7 +123,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:paddingStart="16dp"
-            android:paddingEnd="8dp"
+            android:paddingEnd="16dp"
             android:layout_marginTop="8dp"
             android:orientation="horizontal">
 

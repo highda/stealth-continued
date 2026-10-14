@@ -156,7 +156,7 @@ class FeedEditDialogFragment : DialogFragment(), DialogInterface.OnShowListener 
     private fun confirmDelete() {
         val id = feedId ?: return
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.feed_delete)
+            .setTitle(R.string.feed_delete_title)
             .setMessage(getString(R.string.feed_delete_message, binding.inputName.text))
             .setPositiveButton(R.string.feed_delete) { _, _ ->
                 lifecycleScope.launch {
