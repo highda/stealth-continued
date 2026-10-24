@@ -50,9 +50,10 @@ class PostListRepository @Inject constructor(
         children: List<String>,
         linkId: String,
         parentId: String,
-        depth: Int
+        depth: Int,
+        id: String
     ): Flow<MoreChildren> = flow {
-        emit(source.getMoreChildren(children, linkId, parentId, depth))
+        emit(source.getMoreChildren(children, linkId, parentId, depth, id))
     }
 
     //region Subreddit

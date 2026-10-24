@@ -1,0 +1,4 @@
+- Comments load again with redlib-tor-api 0.40
+- "Load more comments" in one request per tap
+- Feeds of several subreddits are real listings again, with every sort
+- User search finds users by name

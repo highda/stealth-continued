@@ -43,11 +43,23 @@ interface TedditApi {
         @Query("sort") sort: Sort
     ): List<Listing>
 
-    /** A comment thread focused on [commentId], as raw JSON (see TedditSource.getMoreChildren). */
+    /**
+     * A comment thread focused on [commentId], as raw JSON (see TedditSource.getMoreChildren).
+     * With [cursor] (the id of a "more" stub under that comment), the rest of its replies.
+     */
     @GET("/comments/{post}/_/{comment}?api")
     suspend fun getCommentThread(
         @Path("post") postId: String,
         @Path("comment") commentId: String,
+        @Query("sort") sort: Sort?,
+        @Query("cursor") cursor: String? = null
+    ): ResponseBody
+
+    /** The next top-level comments of a post, from the cursor of a "more" stub under the post. */
+    @GET("/comments/{post}?api")
+    suspend fun getCommentPage(
+        @Path("post") postId: String,
+        @Query("cursor") cursor: String,
         @Query("sort") sort: Sort?
     ): ResponseBody
 
@@ -80,6 +92,12 @@ interface TedditApi {
         @Query("t") timeSorting: TimeSorting?,
         @Query("after") after: String? = null,
         @Query("limit") limit: Int? = null
+    ): Listing
+
+    @GET("/users/search?api&nsfw=on")
+    suspend fun searchUser(
+        @Query("q") query: String,
+        @Query("after") after: String? = null
     ): Listing
 
     @GET("/subreddits/search?api&nsfw=on")

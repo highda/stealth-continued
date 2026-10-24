@@ -153,7 +153,8 @@ class CommentAdapter(
     ) {
         val post = postEntity ?: return
 
-        // Top-level comments cost one request each (see TedditSource.getMoreChildren)
+        // Top-level comments cost one request each (see TedditSource.getMoreChildren). A stub
+        // without ids is a cursor: one request, which ends with a new stub if more remain.
         val limit = if (comment.parent.startsWith("t1_")) LOAD_MORE_LIMIT else LOAD_MORE_TOP_LIMIT
         val containsMoreComments = comment.more.size > limit
 
@@ -166,7 +167,7 @@ class CommentAdapter(
             }
         }
 
-        repository.getMoreChildren(children, post.id, comment.parent, comment.depth)
+        repository.getMoreChildren(children, post.id, comment.parent, comment.depth, comment.id)
             .map {
                 commentMapper.dataToEntities(it.json.data.things, null)
             }

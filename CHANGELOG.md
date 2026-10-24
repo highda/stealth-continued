@@ -1,3 +1,18 @@
+# 2.5.0 - 2026/10/24
+
+### Added
+- User search finds users by name, as on Reddit (on instances with `/users/search`, such as
+  redlib-tor-api 0.40.0-tor.2; others still look up the exact username)
+
+### Changed
+- Feeds of several subreddits are real `/r/a+b` listings again, with every sort and stickied
+  posts (redlib-tor-api 0.40.0-tor.2 fixed the `+`)
+
+### Fixed
+- Comments did not load at all with redlib-tor-api 0.40.0-tor.1 (Reddit's GraphQL comments)
+- "Load more comments" with redlib-tor-api: one request per tap, through Reddit's continuation
+  cursors, for replies and for the next top-level comments
+
 # 2.4.0 - 2026/10/14
 
 First release of Stealth-Continued, a fork of Stealth 2.3.1.

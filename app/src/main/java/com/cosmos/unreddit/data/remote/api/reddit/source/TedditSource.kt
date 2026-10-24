@@ -20,6 +20,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -49,36 +50,8 @@ class TedditSource @Inject constructor(
         timeSorting: TimeSorting?,
         after: String? = null
     ): Listing {
-        if (subreddit.contains('+')) return getMultiSubreddit(subreddit.split('+'), sort, timeSorting, after)
+        // Several subreddits (subscriptions, custom feeds) are one `/r/a+b` listing
         return tedditApi.getSubreddit(subreddit, sort, timeSorting, after)
-    }
-
-    /**
-     * Posts from several subreddits (subscriptions, custom feeds).
-     *
-     * redlib-tor-api forwards `/r/a+b` to Reddit with a literal `+`, which Reddit reads as a
-     * space and answers with r/popular. A search restricted to the subreddits returns the same
-     * posts in one request, minus stickied posts; search has no rising or controversial sort,
-     * so those fall back to hot and top.
-     */
-    private suspend fun getMultiSubreddit(
-        subreddits: List<String>,
-        sort: Sort,
-        timeSorting: TimeSorting?,
-        after: String?
-    ): Listing {
-        val query = subreddits.joinToString(" OR ") { "subreddit:$it" }
-        val searchSort = when (sort) {
-            Sort.NEW, Sort.TOP, Sort.COMMENTS -> sort
-            Sort.CONTROVERSIAL -> Sort.TOP
-            else -> Sort.HOT
-        }
-        val time = if (searchSort == Sort.TOP) timeSorting ?: TimeSorting.DAY else TimeSorting.ALL
-        val listing = tedditApi.searchPost(query, searchSort, time, after)
-        if (listing.data.children.isNotEmpty() || listing.data.after != null) return listing
-        // Reddit's search now and then answers with nothing, and Redlib caches that for a while;
-        // ask once more with a different URL (an explicit default limit) to get past the cache
-        return tedditApi.searchPost(query, searchSort, time, after, limit = SEARCH_LIMIT)
     }
 
     suspend fun getSubredditInfo(subreddit: String): Child {
@@ -102,24 +75,30 @@ class TedditSource @Inject constructor(
     }
 
     /**
-     * Loads the comments hidden behind a "more" stub. The Teddit API has no
-     * `/api/morechildren`, so this rebuilds its answer from comment permalinks:
+     * Loads the comments hidden behind a "more" stub, in Reddit's `/api/morechildren` shape: a
+     * flat, depth-first list with absolute depths. The Teddit API has no `/api/morechildren`.
+     *
+     * A stub without [children] (redlib-tor-api, whose threads come from Reddit's GraphQL API)
+     * carries a continuation cursor as its [id]: one request returns the next comments, ending
+     * with a new stub while more remain. See [getMoreFromCursor].
+     *
+     * A stub listing comment ids is rebuilt from comment permalinks:
      *
      * - A stub under a comment: one request for the thread focused on that comment, keeping
      *   the requested replies with their loaded descendants.
      * - A stub under the post, or IDs the first request did not return: one request per
      *   comment, focused on the comment itself, at most [MORE_PARALLELISM] at a time.
-     *
-     * Returns Reddit's `/api/morechildren` shape: a flat, depth-first list with absolute depths.
      */
     suspend fun getMoreChildren(
         children: List<String>,
         linkId: String,
         parentId: String,
         depth: Int,
+        id: String,
         sort: Sort? = null
     ): MoreChildren = withContext(ioDispatcher) {
         val postId = linkId.removePrefix("t3_")
+        if (children.isEmpty()) return@withContext getMoreFromCursor(postId, parentId, depth, id, sort)
         val things = mutableListOf<Any?>()
         val found = mutableSetOf<String>()
 
@@ -183,6 +162,29 @@ class TedditSource @Inject constructor(
         MoreChildren(JsonMore(Data(parsed)))
     }
 
+    /**
+     * The comments behind a cursor stub at [depth]: under a comment, the rest of its replies
+     * (one request for that comment's thread); under the post, the next top-level comments.
+     * Both come back as top-level children, so depths are set from the nesting.
+     */
+    private suspend fun getMoreFromCursor(
+        postId: String,
+        parentId: String,
+        depth: Int,
+        cursor: String,
+        sort: Sort?
+    ): MoreChildren {
+        val body = if (parentId.startsWith("t1_")) {
+            tedditApi.getCommentThread(postId, parentId.removePrefix("t1_"), sort, cursor)
+        } else {
+            tedditApi.getCommentPage(postId, cursor, sort)
+        }
+        val things = mutableListOf<Any?>()
+        parseThread(body).forEach { flattenAt(it, depth, things) }
+        val parsed = childListAdapter.fromJsonValue(things) ?: throw IOException()
+        return MoreChildren(JsonMore(Data(parsed)))
+    }
+
     //region User
 
     suspend fun getUserInfo(user: String): Child {
@@ -221,8 +223,8 @@ class TedditSource @Inject constructor(
     }
 
     /**
-     * The Teddit API has no user search, so this looks the query up as an exact username and
-     * returns that user, or nothing.
+     * Reddit's user search (`/users/search`, a redlib-tor-api extension). On an instance without
+     * it, falls back to looking the query up as an exact username.
      */
     suspend fun searchUser(
         query: String,
@@ -230,6 +232,11 @@ class TedditSource @Inject constructor(
         timeSorting: TimeSorting?,
         after: String? = null
     ): Listing {
+        try {
+            return tedditApi.searchUser(query, after)
+        } catch (e: HttpException) {
+            if (e.code() != 404) throw e
+        }
         val name = query.trim().removePrefix("/").removePrefix("u/").removePrefix("user/")
         val user = if (after == null && USERNAME.matches(name)) {
             try {
@@ -260,7 +267,12 @@ class TedditSource @Inject constructor(
     /** Top-level children (as JSON maps) of the comment listing of a focused thread. */
     @Suppress("UNCHECKED_CAST")
     private suspend fun getThread(postId: String, commentId: String, sort: Sort?): List<Map<String, Any?>> {
-        val body = tedditApi.getCommentThread(postId, commentId, sort)
+        return parseThread(tedditApi.getCommentThread(postId, commentId, sort))
+    }
+
+    /** Top-level children (as JSON maps) of the comment listing in a thread's JSON. */
+    @Suppress("UNCHECKED_CAST")
+    private fun parseThread(body: ResponseBody): List<Map<String, Any?>> {
         val json = body.use { jsonAdapter.fromJson(it.source()) } as? List<Map<String, Any?>>
             ?: throw IOException("Unexpected thread JSON")
         val comments = json.getOrNull(1)?.get("data") as? Map<String, Any?>
@@ -293,12 +305,22 @@ class TedditSource @Inject constructor(
         replies.forEach { flatten(it, shift, out) }
     }
 
+    /**
+     * Appends [child] at [depth] and its descendants one level deeper each, to [out]
+     * depth-first with `replies` emptied, whatever depths the JSON had.
+     */
+    private fun flattenAt(child: Map<String, Any?>, depth: Int, out: MutableList<Any?>) {
+        val data = child.data() ?: return
+        val newData = data.toMutableMap().apply { put("depth", depth) }
+        if (child["kind"] == "t1") newData["replies"] = ""
+        out.add(child.toMutableMap().apply { put("data", newData) })
+        child.replies().forEach { flattenAt(it, depth + 1, out) }
+    }
+
     //endregion
 
     companion object {
         private const val MORE_PARALLELISM = 4
-
-        private const val SEARCH_LIMIT = 25
 
         private val USERNAME = Regex("^[A-Za-z0-9_-]{3,20}$")
     }

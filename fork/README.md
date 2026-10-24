@@ -44,14 +44,13 @@ Any instance that serves Teddit's API (`?api`, `target=reddit`) works. The app e
 With [redlib-tor-api](https://github.com/highda/redlib-tor-api), media is proxied by the
 instance as well, so images and videos never come from Reddit's servers either.
 
-### Known instance limitations (redlib-tor-api)
+### With redlib-tor-api
 
-- `/r/a+b` listings come back as r/popular, because the `+` reaches Reddit unencoded. Feeds of
-  several subreddits (subscriptions, custom feeds) therefore use a search restricted to those
-  subreddits, which has no rising or controversial sort and leaves out stickied posts.
-- There is no `/api/morechildren`, so "load more comments" fetches comment permalinks: one
-  request for replies, one per comment for top-level comments (8 per tap).
-- There is no user search; the Users tab looks the query up as an exact username.
+Use redlib-tor-api 0.40.0-tor.2 or newer. It answers comment "more" stubs with continuation
+cursors (Reddit no longer serves `/api/morechildren` to anonymous clients), so "load more
+comments" is one request per tap, and it has a user search (`/users/search`). On other Teddit
+API instances, "load more comments" fetches comment permalinks (one request for replies, one
+per comment for top-level comments, 8 per tap) and user search looks up the exact username.
 
 ## Features
 
@@ -99,9 +98,9 @@ Pinned on purpose:
 - **`android.nonTransitiveRClass=false`.** The code uses library attributes through its own
   `R` class.
 
-Workarounds for redlib-tor-api, to remove once the server handles them:
-`TedditSource.getMultiSubreddit` (`/r/a+b`), `TedditSource.getMoreChildren`
-(`/api/morechildren`) and `TedditSource.searchUser` (user search).
+Fallbacks for Teddit API instances other than redlib-tor-api: `TedditSource.getMoreChildren`
+rebuilds `/api/morechildren` from comment permalinks when a stub lists comment ids, and
+`TedditSource.searchUser` looks up the exact username when `/users/search` answers 404.
 
 ## License
 

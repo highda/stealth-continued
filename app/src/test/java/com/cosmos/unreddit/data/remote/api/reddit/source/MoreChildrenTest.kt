@@ -48,7 +48,7 @@ class MoreChildrenTest {
 
     @Test
     fun repliesToAComment_comeFromOneRequestWithAbsoluteDepths() = runBlocking {
-        val result = source.getMoreChildren(listOf("c3", "c5", "c4"), "t3_p1", "t1_c2", depth = 2)
+        val result = source.getMoreChildren(listOf("c3", "c5", "c4"), "t3_p1", "t1_c2", depth = 2, id = "c3")
         val things = result.json.data.things
 
         assertEquals(listOf("comments/p1/_/c2"), requested)
@@ -59,7 +59,7 @@ class MoreChildrenTest {
 
     @Test
     fun topLevelComments_comeOneRequestEach_andDescendantsAreDropped() = runBlocking {
-        val result = source.getMoreChildren(listOf("c1", "c2"), "p1", "t3_p1", depth = 0)
+        val result = source.getMoreChildren(listOf("c1", "c2"), "p1", "t3_p1", depth = 0, id = "c1")
 
         assertEquals(setOf("comments/p1/_/c1", "comments/p1/_/c2"), requested.toSet())
         // c2 came with c1 (its ancestor); fetched on its own, its parent is not the post
@@ -72,7 +72,7 @@ class MoreChildrenTest {
     @Test
     fun failedComments_comeBackAsAMoreStub() = runBlocking {
         failing = setOf("c1")
-        val result = source.getMoreChildren(listOf("c1", "missing"), "p1", "t3_p1", depth = 0)
+        val result = source.getMoreChildren(listOf("c1", "missing"), "p1", "t3_p1", depth = 0, id = "c1")
         val things = result.json.data.things
 
         assertEquals(1, things.size)
@@ -85,7 +85,33 @@ class MoreChildrenTest {
     @Test(expected = HttpException::class)
     fun allFailed_throws() {
         failing = setOf("c1")
-        runBlocking { source.getMoreChildren(listOf("c1"), "p1", "t3_p1", depth = 0) }
+        runBlocking { source.getMoreChildren(listOf("c1"), "p1", "t3_p1", depth = 0, id = "c1") }
+    }
+
+    @Test
+    fun cursorUnderAComment_isOneRequest_withDepthsFromTheNesting() = runBlocking {
+        // redlib-tor-api: a stub without ids; its id is a cursor. The answer lists c2's
+        // remaining replies at the top level, without depths, and ends with a new stub.
+        val result = source.getMoreChildren(emptyList(), "t3_p1", "t1_c2", depth = 2, id = "cursor1")
+        val things = result.json.data.things
+
+        assertEquals(listOf("comments/p1/_/c2?cursor=cursor1"), requested)
+        assertEquals(listOf("c3" to 2, "c4" to 3, "c5" to 2), things.dropLast(1).map { it.idAndDepth() })
+        val more = (things.last() as MoreChild).data
+        assertEquals("cursor2", more.id)
+        assertEquals(2, more.depth)
+        assertEquals(emptyList<String>(), more.children)
+    }
+
+    @Test
+    fun cursorUnderThePost_loadsTheNextTopLevelComments() = runBlocking {
+        val result = source.getMoreChildren(emptyList(), "p1", "t3_p1", depth = 0, id = "cursor1")
+
+        assertEquals(listOf("comments/p1?cursor=cursor1"), requested)
+        assertEquals(
+            listOf("c1" to 0, "c2" to 1, "c3" to 2, "c4" to 3, "c5" to 2),
+            result.json.data.things.dropLast(1).map { it.idAndDepth() }
+        )
     }
 
     private fun Child.idAndDepth(): Pair<String, Int?> = when (this) {
@@ -107,6 +133,26 @@ class MoreChildrenTest {
         return JSONArray()
             .put(listing(emptyList()))
             .put(listing(listOf(tree(id, 0))))
+            .toString()
+    }
+
+    /** A cursor page: [ids] as top-level trees without depths, then a stub for the rest. */
+    private fun cursorPage(ids: List<String>, parent: String): String {
+        fun tree(id: String): JSONObject {
+            val data = JSONObject(comments.getValue(id).toString())
+            data.remove("depth")
+            val replies = children[id].orEmpty()
+            data.put("replies", if (replies.isEmpty()) "" else listing(replies.map { tree(it) }))
+            return JSONObject().put("kind", "t1").put("data", data)
+        }
+        val more = JSONObject().put("kind", "more").put(
+            "data",
+            JSONObject().put("id", "cursor2").put("name", "cursor2").put("count", 3)
+                .put("parent_id", parent).put("children", JSONArray())
+        )
+        return JSONArray()
+            .put(listing(emptyList()))
+            .put(listing(ids.map { tree(it) } + more))
             .toString()
     }
 
@@ -135,7 +181,12 @@ class MoreChildrenTest {
         .put("subreddit_name_prefixed", "r/test")
 
     private inner class FakeApi : TedditApi {
-        override suspend fun getCommentThread(postId: String, commentId: String, sort: Sort?): ResponseBody {
+        override suspend fun getCommentThread(postId: String, commentId: String, sort: Sort?, cursor: String?): ResponseBody {
+            if (cursor != null) {
+                requested.add("comments/$postId/_/$commentId?cursor=$cursor")
+                return cursorPage(children[commentId].orEmpty(), "t1_$commentId")
+                    .toResponseBody("application/json".toMediaType())
+            }
             requested.add("comments/$postId/_/$commentId")
             if (commentId in failing) {
                 throw HttpException(Response.error<Any>(429, "".toResponseBody(null)))
@@ -153,6 +204,12 @@ class MoreChildrenTest {
         override suspend fun getUserPosts(user: String, sort: Sort, timeSorting: TimeSorting?, after: String?): TedditUser = error("unused")
         override suspend fun getUserComments(user: String, sort: Sort, timeSorting: TimeSorting?, after: String?): TedditUser = error("unused")
         override suspend fun searchPost(query: String, sort: Sort?, timeSorting: TimeSorting?, after: String?, limit: Int?): Listing = error("unused")
+        override suspend fun getCommentPage(postId: String, cursor: String, sort: Sort?): ResponseBody {
+            requested.add("comments/$postId?cursor=$cursor")
+            return cursorPage(listOf("c1"), "t3_$postId").toResponseBody("application/json".toMediaType())
+        }
+
+        override suspend fun searchUser(query: String, after: String?): Listing = error("unused")
         override suspend fun searchSubreddit(query: String, sort: Sort?, timeSorting: TimeSorting?, after: String?): Listing = error("unused")
     }
 }
