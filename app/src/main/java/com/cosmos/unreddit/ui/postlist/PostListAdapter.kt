@@ -1,6 +1,5 @@
 package com.cosmos.unreddit.ui.postlist
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -8,10 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cosmos.unreddit.data.model.PostType
 import com.cosmos.unreddit.data.model.db.PostEntity
 import com.cosmos.unreddit.data.model.preferences.ContentPreferences
+import com.cosmos.unreddit.data.model.preferences.UiPreferences.PostLayout
 import com.cosmos.unreddit.data.repository.PostListRepository
-import com.cosmos.unreddit.databinding.ItemPostImageBinding
-import com.cosmos.unreddit.databinding.ItemPostLinkBinding
-import com.cosmos.unreddit.databinding.ItemPostTextBinding
 import com.cosmos.unreddit.ui.common.widget.RedditView
 import com.cosmos.unreddit.util.ClickableMovementMethod
 
@@ -81,6 +78,15 @@ class PostListAdapter(
             }
         }
 
+    var postLayout: PostLayout = PostLayout.CARD
+        set(value) {
+            if (field != value) {
+                field = value
+                // Every row changes its view type
+                notifyDataSetChanged()
+            }
+        }
+
     private val listener = object : Listener {
         override fun onClick(position: Int, isLong: Boolean) {
             getItem(position)?.let {
@@ -123,64 +129,17 @@ class PostListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-
-        return when (viewType) {
-            // Text post
-            PostType.TEXT.value -> PostViewHolder.TextPostViewHolder(
-                ItemPostTextBinding.inflate(inflater, parent, false),
-                listener,
-                clickableMovementMethod
-            )
-            // Image post
-            PostType.IMAGE.value -> PostViewHolder.ImagePostViewHolder(
-                ItemPostImageBinding.inflate(inflater, parent, false),
-                listener
-            )
-            // Video post
-            PostType.VIDEO.value -> PostViewHolder.VideoPostViewHolder(
-                ItemPostImageBinding.inflate(inflater, parent, false),
-                listener
-            )
-            // Link post
-            PostType.LINK.value -> PostViewHolder.LinkPostViewHolder(
-                ItemPostLinkBinding.inflate(inflater, parent, false),
-                listener
-            )
-            else -> throw IllegalArgumentException("Unknown type $viewType")
-        }
+        return PostViewHolder.create(parent, viewType, listener, clickableMovementMethod)
+            ?: throw IllegalArgumentException("Unknown type $viewType")
     }
 
     override fun getItemViewType(position: Int): Int {
-        return getItem(position)?.type?.value ?: -1
+        return getItem(position)?.let { PostViewHolder.getViewType(it, postLayout) } ?: -1
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position) ?: return
-
-        when (getItemViewType(position)) {
-            // Text post
-            PostType.TEXT.value -> (holder as PostViewHolder.TextPostViewHolder).bind(
-                item,
-                contentPreferences
-            )
-            // Image post
-            PostType.IMAGE.value -> (holder as PostViewHolder.ImagePostViewHolder).bind(
-                item,
-                contentPreferences
-            )
-            // Video post
-            PostType.VIDEO.value -> (holder as PostViewHolder.VideoPostViewHolder).bind(
-                item,
-                contentPreferences
-            )
-            // Link post
-            PostType.LINK.value -> (holder as PostViewHolder.LinkPostViewHolder).bind(
-                item,
-                contentPreferences
-            )
-            else -> throw IllegalArgumentException("Unknown type")
-        }
+        (holder as PostViewHolder).bind(item, contentPreferences)
     }
 
     override fun onBindViewHolder(

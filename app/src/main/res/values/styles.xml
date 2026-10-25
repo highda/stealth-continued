@@ -173,22 +173,47 @@
     <!-- Post -->
 
     <style name="TextAppearancePostTitle" parent="">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="TextAppearancePostTitle.Compact">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="TextAppearancePostTitle.Details">
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="TextAppearancePostAuthor" parent="">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="TextAppearancePostInfo" parent="">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/text_color_secondary</item>
     </style>
 
-    <style name="TextAppearancePostFlair" parent="">
+    <style name="TextAppearancePostSubreddit" parent="TextAppearancePostInfo">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_color</item>
+    </style>
+
+    <style name="TextAppearancePostPreview" parent="">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextAppearancePostAction" parent="">
         <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/post_action_color</item>
+    </style>
+
+    <style name="TextAppearancePostFlair" parent="">
+        <item name="android:textSize">11sp</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:scrollbars">none</item>
     </style>
 
@@ -199,6 +224,41 @@
 
     <style name="RoundedImageViewStyle" parent="">
         <item name="cornerSize">10%</item>
+    </style>
+
+    <style name="PostMediaShape" parent="">
+        <item name="cornerSize">@dimen/post_media_radius</item>
+    </style>
+
+    <style name="PostAction">
+        <item name="android:layout_height">@dimen/post_action_height</item>
+        <item name="android:background">@drawable/post_action_background</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingStart">@dimen/post_action_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/post_action_padding_horizontal</item>
+    </style>
+
+    <style name="PostActionIcon">
+        <item name="android:layout_width">@dimen/post_action_icon_size</item>
+        <item name="android:layout_height">@dimen/post_action_icon_size</item>
+        <item name="tint">@color/post_action_color</item>
+    </style>
+
+    <style name="PostActionButton">
+        <item name="android:layout_width">@dimen/post_action_button_size</item>
+        <item name="android:layout_height">@dimen/post_action_button_size</item>
+        <item name="android:padding">@dimen/post_action_button_padding</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="PostChip">
+        <item name="android:paddingStart">@dimen/post_flair_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/post_flair_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/post_flair_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/post_flair_padding_vertical</item>
+        <item name="android:textAppearance">@style/TextAppearancePostFlair</item>
     </style>
 
     <!-- Sort -->

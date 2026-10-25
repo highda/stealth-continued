@@ -6,6 +6,13 @@
 
     <color name="background">#121212</color>
 
+    <color name="post_divider_color">#2A2930</color>
+    <color name="post_preview_text_color">#B9B8C8</color>
+    <color name="post_action_background_color">#25242B</color>
+    <color name="post_action_color">#C9C8D6</color>
+    <color name="post_media_stroke_color">#1FFFFFFF</color>
+    <color name="post_media_background_color">#1E1D23</color>
+
     <color name="icon_tint">#FFFFFF</color>
 
     <color name="chip_background_color">#4B3C5A</color>

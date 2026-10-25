@@ -55,9 +55,14 @@ class ProfileSavedFragment : ListFragment<ProfileSavedAdapter>(),
 
     private fun bindViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            combine(viewModel.savedItems, viewModel.contentPreferences) { items, preferences ->
+            combine(
+                viewModel.savedItems,
+                viewModel.contentPreferences,
+                viewModel.postLayout
+            ) { items, preferences, postLayout ->
                 adapter.run {
                     contentPreferences = preferences
+                    this.postLayout = postLayout
                     submitList(items)
                     binding.loadingState.run {
                         emptyData.isVisible = items.isEmpty()

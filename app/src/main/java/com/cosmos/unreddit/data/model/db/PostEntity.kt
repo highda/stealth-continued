@@ -142,6 +142,13 @@ data class PostEntity @JvmOverloads constructor(
     val textColor: Int
         get() = if (seen) R.color.text_color_post_seen else R.color.text_color
 
+    val previewTextColor: Int
+        get() = if (seen) R.color.text_color_post_seen else R.color.post_preview_text_color
+
+    /** Whether the post lists show the domain: only for links to other sites. */
+    val showDomain: Boolean
+        get() = !isSelf && type != PostType.IMAGE && !domain.endsWith("redd.it")
+
     fun shouldShowPreview(contentPreferences: ContentPreferences): Boolean {
         return (contentPreferences.showNsfwPreview || !isOver18) &&
                 (contentPreferences.showSpoilerPreview || !isSpoiler)

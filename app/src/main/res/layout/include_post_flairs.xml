@@ -13,8 +13,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/post_padding_horizontal">
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.helper.widget.Flow
             android:layout_width="0dp"
@@ -24,7 +23,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:constraint_referenced_ids="nsfw_flair,spoiler_flair,oc_flair,post_flair,pinned_icon,archived_icon,locked_icon"
-            android:layout_marginEnd="@dimen/post_margin_horizontal"
+            android:layout_marginEnd="@dimen/post_spacing"
             app:flow_wrapMode="chain"
             app:flow_horizontalStyle="packed"
             app:flow_horizontalAlign="start"
@@ -37,8 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/nsfw_flair_background"
-            android:padding="@dimen/post_flair_padding"
-            android:textAppearance="@style/TextAppearancePostFlair"
+            style="@style/PostChip"
             android:textColor="@null"
             android:text="@string/flair_nsfw"
             android:visibility="@{post.isOver18 ? View.VISIBLE : View.GONE}" />
@@ -48,8 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/spoiler_flair_background"
-            android:padding="@dimen/post_flair_padding"
-            android:textAppearance="@style/TextAppearancePostFlair"
+            style="@style/PostChip"
             android:textColor="@null"
             android:text="@string/flair_spoiler"
             android:visibility="@{post.isSpoiler ? View.VISIBLE : View.GONE}" />
@@ -59,8 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/oc_flair_background"
-            android:padding="@dimen/post_flair_padding"
-            android:textAppearance="@style/TextAppearancePostFlair"
+            style="@style/PostChip"
             android:textColor="@null"
             android:text="@string/flair_oc"
             android:visibility="@{post.isOC ? View.VISIBLE : View.GONE}" />
@@ -70,7 +66,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/post_flair_background"
-            android:padding="@dimen/post_flair_padding"
+            android:paddingHorizontal="@dimen/post_flair_padding_horizontal"
+            android:paddingVertical="@dimen/post_flair_padding_vertical"
             android:textColor="@null"
             android:visibility="gone"
             tools:visibility="visible"
@@ -78,22 +75,22 @@
 
         <ImageView
             android:id="@+id/pinned_icon"
-            android:layout_width="@dimen/post_icon_size"
-            android:layout_height="@dimen/post_icon_size"
+            android:layout_width="@dimen/post_info_icon_size"
+            android:layout_height="@dimen/post_info_icon_size"
             android:visibility="@{post.isStickied ? View.VISIBLE : View.GONE}"
             app:srcCompat="@drawable/ic_pin" />
 
         <ImageView
             android:id="@+id/archived_icon"
-            android:layout_width="@dimen/post_icon_size"
-            android:layout_height="@dimen/post_icon_size"
+            android:layout_width="@dimen/post_info_icon_size"
+            android:layout_height="@dimen/post_info_icon_size"
             android:visibility="@{post.isArchived ? View.VISIBLE : View.GONE}"
             app:srcCompat="@drawable/ic_archive" />
 
         <ImageView
             android:id="@+id/locked_icon"
-            android:layout_width="@dimen/post_icon_size"
-            android:layout_height="@dimen/post_icon_size"
+            android:layout_width="@dimen/post_info_icon_size"
+            android:layout_height="@dimen/post_info_icon_size"
             android:visibility="@{post.isLocked ? View.VISIBLE : View.GONE}"
             app:srcCompat="@drawable/ic_lock" />
 
@@ -104,10 +101,11 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textColor="@null"
+            android:maxLines="1"
             android:textAppearance="@style/TextAppearancePostDomain"
+            android:textColor="@color/text_color_secondary"
             android:text="@{post.domain}"
-            android:visibility="@{!post.isSelf ? View.VISIBLE : View.GONE}"
+            android:visibility="@{post.showDomain ? View.VISIBLE : View.GONE}"
             tools:text="reddit.com"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

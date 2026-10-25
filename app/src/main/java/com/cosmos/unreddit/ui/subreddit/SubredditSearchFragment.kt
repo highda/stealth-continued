@@ -107,6 +107,12 @@ class SubredditSearchFragment : BaseFragment(), PostListAdapter.PostClickListene
             }
 
             launch {
+                viewModel.postLayout.collect {
+                    postListAdapter.postLayout = it
+                }
+            }
+
+            launch {
                 viewModel.contentPreferences.collect {
                     postListAdapter.contentPreferences = it
                 }

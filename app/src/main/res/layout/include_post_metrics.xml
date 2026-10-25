@@ -10,85 +10,100 @@
             type="com.cosmos.unreddit.data.model.db.PostEntity" />
     </data>
 
+    <!-- Action row: score and comments as pills, save and menu on the end -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/image_vote_icon"
-            android:layout_width="@dimen/post_icon_size"
-            android:layout_height="@dimen/post_icon_size"
+        <LinearLayout
+            android:id="@+id/layout_post_vote"
+            android:layout_width="wrap_content"
+            style="@style/PostAction"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="@dimen/post_padding_horizontal"
-            android:layout_marginTop="@dimen/post_margin_top_small"
-            android:contentDescription="Upvote icon"
-            app:srcCompat = "@drawable/ic_votes"/>
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/text_post_vote"
+            <ImageView
+                android:id="@+id/image_vote_icon"
+                style="@style/PostActionIcon"
+                android:contentDescription="@null"
+                app:srcCompat="@drawable/ic_vote_up"/>
+
+            <TextView
+                android:id="@+id/text_post_vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/post_action_icon_text_margin"
+                android:textAppearance="@style/TextAppearancePostAction"
+                android:textColor="@color/post_action_color"
+                android:text="@{post.score}"
+                tools:text="12.3k"/>
+
+            <ImageView
+                android:id="@+id/image_vote_down_icon"
+                style="@style/PostActionIcon"
+                android:contentDescription="@null"
+                app:srcCompat="@drawable/ic_vote_down"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_post_comments"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/image_vote_icon"
-            app:layout_constraintBottom_toBottomOf="@id/image_vote_icon"
-            app:layout_constraintStart_toEndOf="@id/image_vote_icon"
-            android:layout_marginStart="@dimen/post_icon_text_margin"
-            android:text="@{post.score}"
-            tools:text="12345"/>
+            style="@style/PostAction"
+            app:layout_constraintStart_toEndOf="@id/layout_post_vote"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="@dimen/post_action_gap">
+
+            <ImageView
+                android:id="@+id/image_comments_icon"
+                style="@style/PostActionIcon"
+                android:contentDescription="@null"
+                app:srcCompat="@drawable/ic_comments"/>
+
+            <TextView
+                android:id="@+id/text_post_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/post_action_icon_text_margin"
+                android:textAppearance="@style/TextAppearancePostAction"
+                android:textColor="@color/post_action_color"
+                android:text="@{post.commentsNumber}"
+                tools:text="1234"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/text_post_ratio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/image_vote_icon"
-            app:layout_constraintBottom_toBottomOf="@id/image_vote_icon"
-            app:layout_constraintStart_toEndOf="@id/text_post_vote"
-            android:layout_marginStart="@dimen/post_margin_horizontal"
+            app:layout_constraintStart_toEndOf="@id/layout_post_comments"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="@dimen/post_action_gap"
+            android:textAppearance="@style/TextAppearancePostInfo"
             android:textColor="@color/text_color_secondary"
-            tools:text="50%"/>
-
-        <ImageView
-            android:id="@+id/image_comments_icon"
-            android:layout_width="@dimen/post_icon_size"
-            android:layout_height="@dimen/post_icon_size"
-            app:layout_constraintTop_toTopOf="@id/image_vote_icon"
-            app:layout_constraintBottom_toBottomOf="@id/image_vote_icon"
-            app:layout_constraintStart_toEndOf="@id/text_post_ratio"
-            android:layout_marginStart="24dp"
-            android:contentDescription="Comments icon"
-            app:srcCompat="@drawable/ic_comments"/>
-
-        <TextView
-            android:id="@+id/text_post_comments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/image_vote_icon"
-            app:layout_constraintBottom_toBottomOf="@id/image_vote_icon"
-            app:layout_constraintStart_toEndOf="@id/image_comments_icon"
-            android:layout_marginStart="@dimen/post_icon_text_margin"
-            android:text="@{post.commentsNumber}"
-            tools:text="1234"/>
-
-        <ImageButton
-            android:id="@+id/button_more"
-            android:layout_width="@dimen/post_icon_size"
-            android:layout_height="@dimen/post_icon_size"
-            app:layout_constraintTop_toTopOf="@id/image_vote_icon"
-            app:layout_constraintBottom_toBottomOf="@id/image_vote_icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="@dimen/post_padding_horizontal"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:srcCompat="@drawable/ic_more"/>
+            tools:text="98%"/>
 
         <com.cosmos.unreddit.ui.common.widget.CheckableImageView
             android:id="@+id/button_save"
-            android:layout_width="@dimen/post_icon_size"
-            android:layout_height="@dimen/post_icon_size"
-            app:layout_constraintTop_toTopOf="@id/image_vote_icon"
-            app:layout_constraintBottom_toBottomOf="@id/image_vote_icon"
+            style="@style/PostActionButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/button_more"
-            android:layout_marginEnd="@dimen/post_padding_horizontal"
+            android:contentDescription="@string/save"
             app:srcCompat="@drawable/save" />
+
+        <ImageButton
+            android:id="@+id/button_more"
+            style="@style/PostActionButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/post_menu"
+            app:tint="@color/post_action_color"
+            app:srcCompat="@drawable/ic_more"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

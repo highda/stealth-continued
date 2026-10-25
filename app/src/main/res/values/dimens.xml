@@ -1,40 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="post_margin_horizontal">8dp</dimen>
-    <dimen name="post_margin_vertical">16dp</dimen>
+    <!-- Post lists and the post header: edge to edge rows, one shared set of spacings -->
+    <dimen name="post_padding_horizontal">12dp</dimen>
+    <dimen name="post_padding_top">10dp</dimen>
+    <dimen name="post_padding_bottom">4dp</dimen>
+    <dimen name="post_spacing">6dp</dimen>
+    <dimen name="post_spacing_small">4dp</dimen>
 
-    <dimen name="post_padding_horizontal">16dp</dimen>
+    <dimen name="post_info_icon_size">16dp</dimen>
+    <dimen name="post_info_separator_margin">4dp</dimen>
 
-    <dimen name="post_content_margin_horizontal">25dp</dimen>
+    <dimen name="post_media_radius">8dp</dimen>
+    <dimen name="post_media_max_height">480dp</dimen>
+    <dimen name="post_media_stroke">1dp</dimen>
+    <dimen name="post_type_indicator_margin">8dp</dimen>
+    <dimen name="post_type_indicator_size">28dp</dimen>
+    <dimen name="post_type_indicator_padding">5dp</dimen>
 
-    <dimen name="post_elevation">8dp</dimen>
+    <dimen name="post_link_image_size">80dp</dimen>
 
-    <dimen name="post_title_margin">16dp</dimen>
+    <dimen name="post_text_line_spacing">2dp</dimen>
 
-    <dimen name="post_text_padding">16dp</dimen>
-    <dimen name="post_text_max_height">200dp</dimen>
-    <dimen name="post_text_card_radius">15dp</dimen>
+    <dimen name="post_action_height">32dp</dimen>
+    <dimen name="post_action_icon_size">18dp</dimen>
+    <dimen name="post_action_padding_horizontal">10dp</dimen>
+    <dimen name="post_action_icon_text_margin">4dp</dimen>
+    <dimen name="post_action_gap">8dp</dimen>
+    <dimen name="post_action_radius">16dp</dimen>
+    <dimen name="post_action_button_size">36dp</dimen>
+    <dimen name="post_action_button_padding">8dp</dimen>
 
-    <dimen name="post_image_height">250dp</dimen>
+    <dimen name="post_compact_padding_vertical">8dp</dimen>
+    <dimen name="post_compact_thumbnail_size">68dp</dimen>
+    <dimen name="post_compact_thumbnail_margin">12dp</dimen>
+    <dimen name="post_compact_indicator_size">20dp</dimen>
+    <dimen name="post_compact_indicator_padding">3dp</dimen>
+    <dimen name="post_compact_stat_gap">12dp</dimen>
 
-    <dimen name="post_link_image_size">100dp</dimen>
-    <dimen name="post_link_image_margin_horizontal">8dp</dimen>
-
-    <dimen name="post_margin_top_small">8dp</dimen>
-    <dimen name="post_margin_top_large">16dp</dimen>
-
-    <dimen name="post_icon_size">24dp</dimen>
-    <dimen name="post_icon_text_margin">5dp</dimen>
-
-    <dimen name="post_awards_height">38dp</dimen>
+    <dimen name="post_awards_height">32dp</dimen>
 
     <dimen name="post_flair_padding">4dp</dimen>
-    <dimen name="post_flair_gap">8dp</dimen>
+    <dimen name="post_flair_padding_horizontal">6dp</dimen>
+    <dimen name="post_flair_padding_vertical">1dp</dimen>
+    <dimen name="post_flair_gap">4dp</dimen>
 
-    <dimen name="post_divider_inset">64dp</dimen>
-
-    <dimen name="post_type_indicator_margin">16dp</dimen>
+    <dimen name="post_divider_height">1dp</dimen>
 
     <dimen name="sort_padding">16dp</dimen>
     <dimen name="sort_margin">16dp</dimen>

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Post details header, in the same visual language as the card layout of the post lists -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/post_padding_horizontal"
+    android:paddingTop="@dimen/post_padding_top"
+    android:paddingBottom="@dimen/post_padding_bottom"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -13,54 +17,64 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/text_post_title"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_bias="0"
         layout="@layout/include_post_info"/>
 
     <TextView
         android:id="@+id/text_post_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearancePostTitle"
+        android:textAppearance="@style/TextAppearancePostTitle.Details"
+        android:textColor="@color/text_color"
+        android:textIsSelectable="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/include_post_info"
-        app:layout_constraintBottom_toTopOf="@id/image_post"
-        android:layout_marginHorizontal="@dimen/post_title_margin"
-        android:layout_marginTop="@dimen/post_margin_top_small"
+        android:layout_marginTop="@dimen/post_spacing"
         tools:text="This is a post" />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/image_post"
+    <include
+        android:id="@+id/include_post_flairs"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/post_image_height"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_post_title"
-        app:layout_constraintBottom_toTopOf="@id/text_post"
-        android:layout_marginHorizontal="@dimen/post_content_margin_horizontal"
-        android:layout_marginTop="@dimen/post_margin_top_small"
+        android:layout_marginTop="@dimen/post_spacing"
+        layout="@layout/include_post_flairs"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image_post"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/include_post_flairs"
+        app:layout_constraintDimensionRatio="H,4:3"
+        app:layout_constraintHeight_max="@dimen/post_media_max_height"
+        android:layout_marginTop="@dimen/post_spacing"
         android:scaleType="centerCrop"
-        android:elevation="@dimen/post_elevation"
-        app:shapeAppearanceOverlay="@style/RoundedImageViewStyle"
+        android:background="@color/post_media_background_color"
+        app:shapeAppearanceOverlay="@style/PostMediaShape"
+        app:strokeWidth="@dimen/post_media_stroke"
+        app:strokeColor="@color/post_media_stroke_color"
         android:visibility="gone"
         tools:visibility="visible"
         tools:src="@tools:sample/backgrounds/scenic"/>
 
-    <com.cosmos.unreddit.ui.common.widget.CardButton
+    <ImageView
         android:id="@+id/button_type_indicator"
-        android:layout_width="@dimen/app_bar_button_size"
-        android:layout_height="@dimen/app_bar_button_size"
-        app:layout_constraintStart_toStartOf="@id/image_post"
+        android:layout_width="@dimen/post_type_indicator_size"
+        android:layout_height="@dimen/post_type_indicator_size"
+        app:layout_constraintEnd_toEndOf="@id/image_post"
         app:layout_constraintBottom_toBottomOf="@id/image_post"
         android:layout_margin="@dimen/post_type_indicator_margin"
-        android:focusable="false"
-        android:clickable="false"
-        style="@style/CardButtonStyle"
+        android:padding="@dimen/post_type_indicator_padding"
+        android:background="@drawable/post_type_indicator_background"
+        android:contentDescription="@null"
+        app:tint="@color/white"
         android:visibility="gone"
         tools:visibility="visible"
-        tools:icon="@drawable/ic_play"/>
+        tools:src="@drawable/ic_play"/>
 
     <com.cosmos.unreddit.ui.common.widget.RedditView
         android:id="@+id/text_post"
@@ -69,29 +83,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/image_post"
-        app:layout_constraintBottom_toTopOf="@id/include_post_flairs"
-        android:layout_marginTop="@dimen/post_margin_top_small"
-        android:paddingHorizontal="@dimen/post_text_padding"
+        android:layout_marginTop="@dimen/post_spacing"
         android:visibility="gone"/>
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier_bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="image_post, text_post" />
-
-    <include
-        android:id="@+id/include_post_flairs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_post"
-        app:layout_constraintBottom_toTopOf="@id/scrollview_awards"
-        app:layout_constraintVertical_bias="0"
-        android:layout_marginTop="@dimen/post_margin_top_large"
-        layout="@layout/include_post_flairs"/>
 
     <include
         android:id="@+id/include_crosspost"
@@ -99,10 +92,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/include_post_flairs"
-        app:layout_constraintBottom_toTopOf="@id/scrollview_awards"
-        android:layout_marginTop="@dimen/post_margin_top_small"
-        android:layout_marginHorizontal="@dimen/post_content_margin_horizontal"
+        app:layout_constraintTop_toBottomOf="@id/text_post"
+        android:layout_marginTop="@dimen/post_spacing"
         layout="@layout/include_crosspost"/>
 
     <HorizontalScrollView
@@ -110,11 +101,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/include_crosspost"
-        app:layout_constraintBottom_toTopOf="@id/include_post_metrics"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/post_margin_top_small"
-        android:layout_marginHorizontal="@dimen/post_margin_horizontal"
+        android:layout_marginTop="@dimen/post_spacing"
         android:scrollbars="none"
         android:overScrollMode="never">
 
@@ -133,7 +122,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/scrollview_awards"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="@dimen/post_spacing_small"
         layout="@layout/include_post_metrics"/>
+
+    <!-- Separates the post from its comments -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/post_divider_height"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/include_post_metrics"
+        android:layout_marginTop="@dimen/post_spacing_small"
+        android:background="@color/post_divider_color"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

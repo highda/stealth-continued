@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Compact layout for every post type: text on the start, a small thumbnail on the end -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/post_padding_horizontal"
+    android:paddingTop="@dimen/post_compact_padding_vertical"
+    android:paddingBottom="@dimen/post_spacing_small"
+    android:background="?attr/selectableItemBackground">
+
+    <include
+        android:id="@id/include_post_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/image_post_preview"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="@dimen/post_compact_thumbnail_margin"
+        app:layout_goneMarginEnd="0dp"
+        layout="@layout/include_post_info"/>
+
+    <TextView
+        android:id="@+id/text_post_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearancePostTitle.Compact"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/image_post_preview"
+        app:layout_constraintTop_toBottomOf="@id/include_post_info"
+        android:layout_marginTop="@dimen/post_spacing_small"
+        android:layout_marginEnd="@dimen/post_compact_thumbnail_margin"
+        app:layout_goneMarginEnd="0dp"
+        android:maxLines="@integer/post_compact_title_max_lines"
+        android:ellipsize="end"
+        tools:text="This is a post with a title that is long enough to wrap" />
+
+    <include
+        android:id="@+id/include_post_flairs"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/text_post_title"
+        app:layout_constraintTop_toBottomOf="@id/text_post_title"
+        android:layout_marginTop="@dimen/post_spacing_small"
+        layout="@layout/include_post_flairs"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image_post_preview"
+        android:layout_width="@dimen/post_compact_thumbnail_size"
+        android:layout_height="@dimen/post_compact_thumbnail_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/post_spacing_small"
+        android:scaleType="centerCrop"
+        android:background="@color/post_media_background_color"
+        app:shapeAppearanceOverlay="@style/PostMediaShape"
+        app:strokeWidth="@dimen/post_media_stroke"
+        app:strokeColor="@color/post_media_stroke_color"
+        android:contentDescription="Post preview image"
+        tools:src="@tools:sample/backgrounds/scenic"/>
+
+    <ImageView
+        android:id="@+id/image_type_indicator"
+        android:layout_width="@dimen/post_compact_indicator_size"
+        android:layout_height="@dimen/post_compact_indicator_size"
+        app:layout_constraintEnd_toEndOf="@id/image_post_preview"
+        app:layout_constraintBottom_toBottomOf="@id/image_post_preview"
+        android:layout_margin="@dimen/post_spacing_small"
+        android:padding="@dimen/post_compact_indicator_padding"
+        android:background="@drawable/post_type_indicator_background"
+        android:contentDescription="@null"
+        app:tint="@color/white"
+        tools:src="@drawable/ic_play"/>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="include_post_flairs, text_post_title" />
+
+    <!-- One line of stats, then save and menu, next to the thumbnail -->
+    <ImageView
+        android:id="@+id/image_vote_icon"
+        style="@style/PostActionIcon"
+        android:layout_width="@dimen/post_info_icon_size"
+        android:layout_height="@dimen/post_info_icon_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button_more"
+        app:layout_constraintBottom_toBottomOf="@id/button_more"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/ic_vote_up"/>
+
+    <TextView
+        android:id="@+id/text_post_vote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/image_vote_icon"
+        app:layout_constraintTop_toTopOf="@id/button_more"
+        app:layout_constraintBottom_toBottomOf="@id/button_more"
+        android:layout_marginStart="@dimen/post_action_icon_text_margin"
+        android:textAppearance="@style/TextAppearancePostAction"
+        android:textColor="@color/post_action_color"
+        tools:text="12.3k"/>
+
+    <ImageView
+        android:id="@+id/image_comments_icon"
+        style="@style/PostActionIcon"
+        android:layout_width="@dimen/post_info_icon_size"
+        android:layout_height="@dimen/post_info_icon_size"
+        app:layout_constraintStart_toEndOf="@id/text_post_vote"
+        app:layout_constraintTop_toTopOf="@id/button_more"
+        app:layout_constraintBottom_toBottomOf="@id/button_more"
+        android:layout_marginStart="@dimen/post_compact_stat_gap"
+        android:contentDescription="@null"
+        app:srcCompat="@drawable/ic_comments"/>
+
+    <TextView
+        android:id="@+id/text_post_comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/image_comments_icon"
+        app:layout_constraintTop_toTopOf="@id/button_more"
+        app:layout_constraintBottom_toBottomOf="@id/button_more"
+        android:layout_marginStart="@dimen/post_action_icon_text_margin"
+        android:textAppearance="@style/TextAppearancePostAction"
+        android:textColor="@color/post_action_color"
+        tools:text="345"/>
+
+    <TextView
+        android:id="@+id/text_post_ratio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/text_post_comments"
+        app:layout_constraintTop_toTopOf="@id/button_more"
+        app:layout_constraintBottom_toBottomOf="@id/button_more"
+        android:layout_marginStart="@dimen/post_compact_stat_gap"
+        android:textAppearance="@style/TextAppearancePostInfo"
+        android:textColor="@color/text_color_secondary"
+        tools:text="98%"/>
+
+    <com.cosmos.unreddit.ui.common.widget.CheckableImageView
+        android:id="@+id/button_save"
+        style="@style/PostActionButton"
+        app:layout_constraintTop_toTopOf="@id/button_more"
+        app:layout_constraintBottom_toBottomOf="@id/button_more"
+        app:layout_constraintEnd_toStartOf="@id/button_more"
+        android:contentDescription="@string/save"
+        app:srcCompat="@drawable/save" />
+
+    <ImageButton
+        android:id="@+id/button_more"
+        style="@style/PostActionButton"
+        app:layout_constraintTop_toBottomOf="@id/barrier_bottom"
+        app:layout_constraintEnd_toStartOf="@id/image_post_preview"
+        android:layout_marginEnd="@dimen/post_spacing_small"
+        app:layout_goneMarginEnd="0dp"
+        android:contentDescription="@string/post_menu"
+        app:tint="@color/post_action_color"
+        app:srcCompat="@drawable/ic_more"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

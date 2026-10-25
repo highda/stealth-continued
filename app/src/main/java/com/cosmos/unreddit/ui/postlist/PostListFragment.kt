@@ -146,6 +146,12 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
     private fun bindViewModel() {
         launchRepeat(Lifecycle.State.STARTED) {
             launch {
+                viewModel.postLayout.collect {
+                    postListAdapter.postLayout = it
+                }
+            }
+
+            launch {
                 viewModel.contentPreferences.collect {
                     binding.infoRetry.hide()
                     postListAdapter.contentPreferences = it

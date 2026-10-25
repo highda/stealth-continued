@@ -3,7 +3,6 @@ package com.cosmos.unreddit.ui.postdetails
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil.request.ImageRequest
@@ -16,6 +15,7 @@ import com.cosmos.unreddit.databinding.ItemPostHeaderBinding
 import com.cosmos.unreddit.ui.common.widget.RedditView
 import com.cosmos.unreddit.ui.postlist.PostListAdapter
 import com.cosmos.unreddit.util.extension.load
+import com.cosmos.unreddit.util.extension.setInfo
 import com.cosmos.unreddit.util.extension.setRatio
 
 class PostAdapter(
@@ -70,8 +70,7 @@ class PostAdapter(
 
             binding.includePostInfo.run {
                 this.post = post
-                textPostAuthor.text = post.author
-                textSubreddit.text = post.subreddit
+                setInfo(post.subreddit, post.author, post.posterType)
             }
 
             binding.textPostTitle.text = post.title
@@ -79,9 +78,6 @@ class PostAdapter(
             binding.includePostMetrics.setRatio(post.ratio)
 
             binding.includePostInfo.groupCrosspost.isVisible = false
-            binding.includePostInfo.textPostAuthor.apply {
-                setTextColor(ContextCompat.getColor(context, post.posterType.color))
-            }
 
             bindText(post)
 
@@ -122,15 +118,15 @@ class PostAdapter(
                             post.mediaType == MediaType.IMGUR_ALBUM ||
                             post.mediaType == MediaType.IMGUR_GALLERY -> {
                         visibility = View.VISIBLE
-                        setIcon(R.drawable.ic_gallery)
+                        setImageResource(R.drawable.ic_gallery)
                     }
                     post.type == PostType.VIDEO -> {
                         visibility = View.VISIBLE
-                        setIcon(R.drawable.ic_play)
+                        setImageResource(R.drawable.ic_play)
                     }
                     post.type == PostType.LINK -> {
                         isVisible = true
-                        setIcon(R.drawable.ic_link)
+                        setImageResource(R.drawable.ic_link)
                     }
                     else -> {
                         visibility = View.GONE
@@ -153,8 +149,11 @@ class PostAdapter(
                         root.setOnClickListener { postClickListener.onClick(post.crosspost) }
                         title.text = post.crosspost.title
                         includePostInfo.post = post.crosspost
-                        includePostInfo.textPostAuthor.text = post.crosspost.author
-                        includePostInfo.textSubreddit.text = post.crosspost.subreddit
+                        includePostInfo.setInfo(
+                            post.crosspost.subreddit,
+                            post.crosspost.author,
+                            post.crosspost.posterType
+                        )
                         includePostInfo.groupCrosspost.isVisible = false
                     }
                 }
@@ -163,9 +162,12 @@ class PostAdapter(
                     binding.includeCrosspost.run {
                         root.isVisible = true
                         title.text = post.crosspostScrap?.title
-                        includePostInfo.textPostAuthor.text = post.crosspostScrap?.author
-                        includePostInfo.textSubreddit.text = post.crosspostScrap?.subreddit
+                        includePostInfo.setInfo(
+                            post.crosspostScrap?.subreddit,
+                            post.crosspostScrap?.author
+                        )
                         includePostInfo.textPostDate.isVisible = false
+                        includePostInfo.textSeparatorDate.isVisible = false
                         includePostInfo.groupCrosspost.isVisible = false
                     }
                 }
@@ -215,11 +217,12 @@ class PostAdapter(
                         }
                     }
                 }
-                post.isSelf -> {
-                    binding.includePostFlairs.root.visibility = View.GONE
+                post.showDomain -> {
+                    binding.includePostFlairs.root.visibility = View.VISIBLE
+                    binding.includePostFlairs.postFlair.visibility = View.GONE
                 }
                 else -> {
-                    binding.includePostFlairs.postFlair.visibility = View.GONE
+                    binding.includePostFlairs.root.visibility = View.GONE
                 }
             }
             binding.includePostInfo.postFlair.apply {
@@ -234,6 +237,7 @@ class PostAdapter(
         }
 
         private fun bindAwards(post: PostEntity) {
+            binding.scrollviewAwards.isVisible = post.totalAwards > 0
             binding.awards.apply {
                 if (post.totalAwards > 0) {
                     visibility = View.VISIBLE

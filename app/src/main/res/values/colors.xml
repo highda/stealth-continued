@@ -25,6 +25,15 @@
 
     <color name="background">#FAFAFF</color>
 
+    <!-- Post lists -->
+    <color name="post_divider_color">#E4E3EE</color>
+    <color name="post_preview_text_color">#4D4C5E</color>
+    <color name="post_action_background_color">#EEEDF5</color>
+    <color name="post_action_color">#5D5C72</color>
+    <color name="post_media_stroke_color">#1A000000</color>
+    <color name="post_media_background_color">#ECEBF3</color>
+    <color name="post_type_indicator_background">#99000000</color>
+
     <color name="icon_tint">#212121</color>
 
     <color name="chip_background_color">#EBEBFF</color>

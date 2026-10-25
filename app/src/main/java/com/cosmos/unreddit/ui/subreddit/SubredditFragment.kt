@@ -135,6 +135,12 @@ class SubredditFragment : BaseFragment(), PopupMenu.OnMenuItemClickListener,
     private fun bindViewModel() {
         launchRepeat(Lifecycle.State.STARTED) {
             launch {
+                viewModel.postLayout.collect {
+                    postListAdapter.postLayout = it
+                }
+            }
+
+            launch {
                 viewModel.contentPreferences.collect {
                     postListAdapter.contentPreferences = it
                 }

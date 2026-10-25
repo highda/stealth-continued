@@ -15,9 +15,7 @@ import com.cosmos.unreddit.data.model.PostType
 import com.cosmos.unreddit.data.model.SavedItem
 import com.cosmos.unreddit.data.model.db.PostEntity
 import com.cosmos.unreddit.data.model.preferences.ContentPreferences
-import com.cosmos.unreddit.databinding.ItemPostImageBinding
-import com.cosmos.unreddit.databinding.ItemPostLinkBinding
-import com.cosmos.unreddit.databinding.ItemPostTextBinding
+import com.cosmos.unreddit.data.model.preferences.UiPreferences.PostLayout
 import com.cosmos.unreddit.databinding.ItemUserCommentBinding
 import com.cosmos.unreddit.ui.common.widget.RedditView
 import com.cosmos.unreddit.ui.postlist.PostListAdapter
@@ -72,6 +70,15 @@ class ProfileSavedAdapter(
             }
         }
 
+    var postLayout: PostLayout = PostLayout.CARD
+        set(value) {
+            if (field != value) {
+                field = value
+                // Every post changes its view type
+                notifyDataSetChanged()
+            }
+        }
+
     private val listener = object : PostListAdapter.Listener {
         override fun onClick(position: Int, isLong: Boolean) {
             getPost(position)?.let {
@@ -112,67 +119,25 @@ class ProfileSavedAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-
-        return when (viewType) {
-            // Text post
-            PostType.TEXT.value -> PostViewHolder.TextPostViewHolder(
-                ItemPostTextBinding.inflate(inflater, parent, false),
-                listener,
-                clickableMovementMethod
-            )
-            // Image post
-            PostType.IMAGE.value -> PostViewHolder.ImagePostViewHolder(
-                ItemPostImageBinding.inflate(inflater, parent, false),
-                listener
-            )
-            // Video post
-            PostType.VIDEO.value -> PostViewHolder.VideoPostViewHolder(
-                ItemPostImageBinding.inflate(inflater, parent, false),
-                listener
-            )
-            // Link post
-            PostType.LINK.value -> PostViewHolder.LinkPostViewHolder(
-                ItemPostLinkBinding.inflate(inflater, parent, false),
-                listener
-            )
-            COMMENT_TYPE -> CommentViewHolder(ItemUserCommentBinding.inflate(inflater, parent, false))
-            else -> throw IllegalArgumentException("Unknown type $viewType")
+        if (viewType == COMMENT_TYPE) {
+            val inflater = LayoutInflater.from(parent.context)
+            return CommentViewHolder(ItemUserCommentBinding.inflate(inflater, parent, false))
         }
+        return PostViewHolder.create(parent, viewType, listener, clickableMovementMethod)
+            ?: throw IllegalArgumentException("Unknown type $viewType")
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (getItemViewType(position)) {
-            // Text post
-            PostType.TEXT.value -> (holder as PostViewHolder.TextPostViewHolder).bind(
-                getPost(position)!!,
-                contentPreferences
-            )
-            // Image post
-            PostType.IMAGE.value -> (holder as PostViewHolder.ImagePostViewHolder).bind(
-                getPost(position)!!,
-                contentPreferences
-            )
-            // Video post
-            PostType.VIDEO.value -> (holder as PostViewHolder.VideoPostViewHolder).bind(
-                getPost(position)!!,
-                contentPreferences
-            )
-            // Link post
-            PostType.LINK.value -> (holder as PostViewHolder.LinkPostViewHolder).bind(
-                getPost(position)!!,
-                contentPreferences
-            )
-            COMMENT_TYPE -> (holder as CommentViewHolder).bind(
-                (getItem(position) as SavedItem.Comment).comment
-            )
+        when (holder) {
+            is PostViewHolder -> holder.bind(getPost(position)!!, contentPreferences)
+            is CommentViewHolder -> holder.bind((getItem(position) as SavedItem.Comment).comment)
             else -> throw IllegalArgumentException("Unknown type")
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (val item = getItem(position)) {
-            is SavedItem.Post -> item.post.type.value
+            is SavedItem.Post -> PostViewHolder.getViewType(item.post, postLayout)
             is SavedItem.Comment -> COMMENT_TYPE
             else -> -1
         }

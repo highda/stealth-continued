@@ -32,6 +32,12 @@ class UserPostFragment : PagingListFragment<PostListAdapter, PostEntity>() {
         super.bindViewModel()
         launchRepeat(Lifecycle.State.STARTED) {
             launch {
+                viewModel.postLayout.collect {
+                    adapter.postLayout = it
+                }
+            }
+
+            launch {
                 viewModel.contentPreferences.collect {
                     adapter.contentPreferences = it
                 }
