@@ -142,4 +142,7 @@
     <string name="navigation_label_home">Startseite</string>
     <string name="navigation_label_subscriptions">Abonnements</string>
     <string name="navigation_label_settings">Einstellungen</string>
+    <string name="preference_post_layout">Beitragslayout</string>
+    <string name="preference_post_layout_card">Karten</string>
+    <string name="preference_post_layout_compact">Kompakt</string>
 </resources>

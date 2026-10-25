@@ -2,6 +2,7 @@ package com.cosmos.unreddit.ui.preferences
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cosmos.unreddit.data.model.preferences.UiPreferences
 import com.cosmos.unreddit.data.remote.instance.Instance
 import com.cosmos.unreddit.data.remote.instance.InstanceManager
 import com.cosmos.unreddit.data.repository.PreferencesRepository
@@ -25,6 +26,8 @@ class PreferencesViewModel @Inject constructor(
 
     val leftHandedMode: Flow<Boolean> = preferencesRepository.getLeftHandedMode()
 
+    val postLayout: Flow<UiPreferences.PostLayout> = preferencesRepository.getPostLayout()
+
     val showNsfw: Flow<Boolean> = preferencesRepository.getShowNsfw()
 
     val showNsfwPreview: Flow<Boolean> = preferencesRepository.getShowNsfwPreview()
@@ -46,6 +49,12 @@ class PreferencesViewModel @Inject constructor(
     fun setLeftHandedMode(leftHandedMode: Boolean) {
         viewModelScope.launch {
             preferencesRepository.setLeftHandedMode(leftHandedMode)
+        }
+    }
+
+    fun setPostLayout(postLayout: UiPreferences.PostLayout) {
+        viewModelScope.launch {
+            preferencesRepository.setPostLayout(postLayout)
         }
     }
 

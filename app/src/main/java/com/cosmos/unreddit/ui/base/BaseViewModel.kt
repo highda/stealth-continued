@@ -6,12 +6,14 @@ import com.cosmos.unreddit.data.model.Comment
 import com.cosmos.unreddit.data.model.db.PostEntity
 import com.cosmos.unreddit.data.model.db.Profile
 import com.cosmos.unreddit.data.model.db.Subscription
+import com.cosmos.unreddit.data.model.preferences.UiPreferences
 import com.cosmos.unreddit.data.repository.PostListRepository
 import com.cosmos.unreddit.data.repository.PreferencesRepository
 import com.cosmos.unreddit.util.extension.latest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
@@ -25,6 +27,10 @@ open class BaseViewModel(
     val currentProfile: SharedFlow<Profile> = preferencesRepository.getCurrentProfile().map {
         postListRepository.getProfile(it)
     }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(), 1)
+
+    /** Layout of the post lists, applied as soon as it changes in the preferences. */
+    val postLayout: Flow<UiPreferences.PostLayout> = preferencesRepository.getPostLayout()
+        .distinctUntilChanged()
 
     protected val historyIds: Flow<List<String>> = currentProfile.flatMapLatest {
         postListRepository.getHistoryIds(it.id)

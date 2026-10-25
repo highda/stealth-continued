@@ -9,6 +9,9 @@
     <string name="ok">OK</string>
 
     <string name="post_ratio">%1$d%%</string>
+    <string name="post_author" translatable="false">u/%1$s</string>
+    <string name="post_info_separator" translatable="false">·</string>
+    <string name="post_menu">More options</string>
 
     <string name="time_difference_now">now</string>
     <string name="time_difference_minute">%1$dm ago</string>
@@ -139,6 +142,9 @@
     <string name="preference_night_mode_system">Follow System</string>
     <string name="preference_night_mode_amoled">Amoled</string>
 
+    <string name="preference_post_layout">Post layout</string>
+    <string name="preference_post_layout_card">Card</string>
+    <string name="preference_post_layout_compact">Compact</string>
     <string name="preference_left_handed_mode">Left-handed mode</string>
 
     <string name="preference_show_nsfw">Show NSFW content</string>

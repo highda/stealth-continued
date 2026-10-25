@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
+    <string-array name="pref_post_layout_labels">
+        <item>@string/preference_post_layout_card</item>
+        <item>@string/preference_post_layout_compact</item>
+    </string-array>
+
     <string-array name="pref_night_mode_labels">
         <item>@string/preference_night_mode_light</item>
         <item>@string/preference_night_mode_dark</item>

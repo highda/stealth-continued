@@ -111,4 +111,7 @@
      <string name="navigation_label_home">Inicio</string>
      <string name="navigation_label_subscriptions">Suscripciones</string>
      <string name="navigation_label_settings">Preferencias</string>
+    <string name="preference_post_layout">Diseño de las publicaciones</string>
+    <string name="preference_post_layout_card">Tarjetas</string>
+    <string name="preference_post_layout_compact">Compacto</string>
 </resources>

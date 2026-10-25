@@ -37,6 +37,7 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private val viewModel: PreferencesViewModel by activityViewModels()
 
     private var nightModePreference: Preference? = null
+    private var postLayoutPreference: Preference? = null
     private var leftHandedModePreference: SwitchPreferenceCompat? = null
     private var showNsfwPreference: SwitchPreferenceCompat? = null
     private var showNsfwPreviewPreference: SwitchPreferenceCompat? = null
@@ -45,6 +46,8 @@ class PreferencesFragment : PreferenceFragmentCompat() {
     private var sourcePreference: Preference? = null
     private var privacyEnhancerPreference: Preference? = null
     private var aboutPreference: Preference? = null
+
+    private var currentPostLayout: UiPreferences.PostLayout = UiPreferences.PostLayout.CARD
 
     private val navOptions: NavOptions by lazy { getNavOptions() }
 
@@ -89,6 +92,15 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                         showNightModeDialog(index)
                     }
                 }
+                true
+            }
+        }
+
+        postLayoutPreference = findPreference<Preference>(
+            UiPreferences.PreferencesKeys.POST_LAYOUT.name
+        )?.apply {
+            setOnPreferenceClickListener {
+                showPostLayoutDialog()
                 true
             }
         }
@@ -173,6 +185,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             }
 
             launch {
+                viewModel.postLayout.collect { postLayout ->
+                    currentPostLayout = postLayout
+                    val labels = resources.getStringArray(R.array.pref_post_layout_labels)
+                    postLayoutPreference?.summary = labels.getOrNull(postLayout.index)
+                }
+            }
+
+            launch {
                 viewModel.leftHandedMode.collect { leftHandedMode ->
                     leftHandedModePreference?.isChecked = leftHandedMode
                 }
@@ -231,6 +251,19 @@ class PreferencesFragment : PreferenceFragmentCompat() {
                     updateNightMode(mode)
                     dialog.dismiss()
                 }
+            }
+            .show()
+    }
+
+    private fun showPostLayoutDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.preference_post_layout)
+            .setSingleChoiceItems(
+                R.array.pref_post_layout_labels,
+                currentPostLayout.index
+            ) { dialog, which ->
+                viewModel.setPostLayout(UiPreferences.PostLayout.fromIndex(which))
+                dialog.dismiss()
             }
             .show()
     }

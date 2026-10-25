@@ -11,6 +11,20 @@ data class UiPreferences(
     object PreferencesKeys {
         val NIGHT_MODE = intPreferencesKey("night_mode")
         val LEFT_HANDED_MODE = booleanPreferencesKey("left_handed_mode")
+        val POST_LAYOUT = intPreferencesKey("post_layout")
+    }
+
+    /** How post lists show their posts. */
+    enum class PostLayout(val index: Int) {
+        // Indexes must follow pref_post_layout_labels array
+        CARD(0),
+        COMPACT(1);
+
+        companion object {
+            fun fromIndex(index: Int): PostLayout {
+                return values().find { it.index == index } ?: CARD
+            }
+        }
     }
 
     enum class NightMode(val index: Int, val mode: Int) {

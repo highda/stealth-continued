@@ -50,6 +50,17 @@ class PreferencesRepository @Inject constructor(
         )
     }
 
+    suspend fun setPostLayout(postLayout: UiPreferences.PostLayout) {
+        preferencesDatastore.setValue(UiPreferences.PreferencesKeys.POST_LAYOUT, postLayout.index)
+    }
+
+    fun getPostLayout(): Flow<UiPreferences.PostLayout> {
+        return preferencesDatastore.getValue(
+            UiPreferences.PreferencesKeys.POST_LAYOUT,
+            UiPreferences.PostLayout.CARD.index
+        ).map { UiPreferences.PostLayout.fromIndex(it) }
+    }
+
     //endregion
 
     //region Content
