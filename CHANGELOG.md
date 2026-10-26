@@ -1,3 +1,13 @@
+# 2.7.0 - 2026/10/26
+
+### Added
+- Popular (r/popular) and All (r/all) in the profile drawer, next to Home and the custom
+  feeds: Reddit's general feeds whatever you subscribe to
+
+### Fixed
+- Tapping the text preview of a post in a feed did nothing; the whole card opens the post now
+  (links in the preview still open the link)
+
 # 2.6.0 - 2026/10/26
 
 ### Added

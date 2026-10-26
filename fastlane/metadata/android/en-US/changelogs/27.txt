@@ -1,0 +1,2 @@
+- Popular and All feeds in the profile drawer, whatever you subscribe to
+- Tapping anywhere on a post card opens the post, its text preview included

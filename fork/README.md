@@ -19,7 +19,8 @@ hood it talks to one server only: a Teddit API instance you choose, such as
 - **Everything through the instance.** The API, images, videos and downloads share one HTTP
   client, and media URLs from the instance (`/media/...`) get the same credentials.
 - **Custom feeds.** Named sets of subreddits per profile, like Reddit's custom feeds. Tap the
-  profile avatar on the home screen: Home shows your subscriptions, each feed its subreddits.
+  profile avatar on the home screen: Home shows your subscriptions, Popular and All Reddit's
+  general feeds, each custom feed its subreddits.
   Long-press a feed to edit or delete it; subreddit pages have "Add to a feed".
 - **No more "Stealth might stop working" banner** or Reddit API policy dialog.
 - **Hidden NSFW content is announced.** With "Show NSFW content" off, a list or search that
