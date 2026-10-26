@@ -59,23 +59,24 @@ class PostListViewModel
         repository.getFeeds(it.id)
     }
 
-    /** The custom feed shown instead of the subscriptions, or null for the home feed. */
-    private val _selectedFeedId: MutableStateFlow<Int?> = MutableStateFlow(null)
-    val selectedFeedId: StateFlow<Int?> = _selectedFeedId
+    private val _selection: MutableStateFlow<FeedSelection> = MutableStateFlow(FeedSelection.Home)
+    val selection: StateFlow<FeedSelection> = _selection
 
-    val selectedFeed: Flow<FeedWithSubreddits?> = _selectedFeedId.flatMapLatest { id ->
-        if (id == null) flowOf(null) else repository.getFeed(id)
+    /** The selected custom feed, or null when another feed is shown. */
+    val selectedFeed: Flow<FeedWithSubreddits?> = _selection.flatMapLatest { selection ->
+        if (selection is FeedSelection.Custom) repository.getFeed(selection.id) else flowOf(null)
     }
 
     val subreddit: Flow<List<String>> = combine(
         subscriptionsNames.distinctUntilChanged(),
+        _selection,
         selectedFeed.map { it?.names }.distinctUntilChanged()
-    ) { subscriptions, feed ->
-        when {
+    ) { subscriptions, selection, feed ->
+        when (selection) {
+            is FeedSelection.Reddit -> listOf(selection.subreddit)
             // An empty custom feed shows nothing, not r/popular
-            feed != null -> feed
-            subscriptions.isNotEmpty() -> subscriptions.shuffled()
-            else -> listOf(DEFAULT_SUBREDDIT)
+            is FeedSelection.Custom -> feed.orEmpty()
+            FeedSelection.Home -> subscriptions.shuffled().ifEmpty { listOf(DEFAULT_SUBREDDIT) }
         }
     }
         .flowOn(defaultDispatcher)
@@ -134,14 +135,14 @@ class PostListViewModel
     }
 
     fun selectProfile(profile: Profile) {
-        _selectedFeedId.value = null
+        _selection.value = FeedSelection.Home
         viewModelScope.launch {
             preferencesRepository.setCurrentProfile(profile.id)
         }
     }
 
-    fun selectFeed(feedId: Int?) {
-        _selectedFeedId.value = feedId
+    fun select(selection: FeedSelection) {
+        _selection.value = selection
     }
 
     companion object {

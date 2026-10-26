@@ -297,6 +297,10 @@
     <string name="feeds_title">Feeds</string>
     <string name="feed_home">Home</string>
     <string name="feed_home_info">Your subscriptions</string>
+    <string name="feed_popular">Popular</string>
+    <string name="feed_popular_info">r/popular</string>
+    <string name="feed_all">All</string>
+    <string name="feed_all_info">r/all</string>
     <string name="feed_new">New feed</string>
     <string name="feed_edit">Edit feed</string>
     <string name="feed_delete">Delete</string>

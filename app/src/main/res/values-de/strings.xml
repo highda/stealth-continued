@@ -145,4 +145,8 @@
     <string name="preference_post_layout">Beitragslayout</string>
     <string name="preference_post_layout_card">Karten</string>
     <string name="preference_post_layout_compact">Kompakt</string>
+    <string name="feed_popular">Beliebt</string>
+    <string name="feed_popular_info">r/popular</string>
+    <string name="feed_all">Alle</string>
+    <string name="feed_all_info">r/all</string>
 </resources>

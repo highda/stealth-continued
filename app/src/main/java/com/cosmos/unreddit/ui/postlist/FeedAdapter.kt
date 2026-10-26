@@ -10,18 +10,26 @@ import com.cosmos.unreddit.R
 import com.cosmos.unreddit.data.model.db.FeedWithSubreddits
 import com.cosmos.unreddit.databinding.ItemFeedBinding
 
-/** The home feed (subscriptions) followed by the custom feeds, in the profile drawer. */
+/**
+ * The home feed (subscriptions), Reddit's Popular and All, then the custom feeds, in the profile
+ * drawer.
+ */
 class FeedAdapter(
-    private val onClick: (FeedWithSubreddits?) -> Unit,
+    private val onClick: (FeedSelection) -> Unit,
     private val onLongClick: (FeedWithSubreddits) -> Unit
 ) : ListAdapter<FeedAdapter.Item, FeedAdapter.ViewHolder>(COMPARATOR) {
 
-    data class Item(val feed: FeedWithSubreddits?, val selected: Boolean)
+    /** [feed] is set for custom feeds only. */
+    data class Item(val selection: FeedSelection, val feed: FeedWithSubreddits?, val selected: Boolean)
 
-    fun submit(feeds: List<FeedWithSubreddits>, selectedId: Int?) {
+    fun submit(feeds: List<FeedWithSubreddits>, selected: FeedSelection) {
+        val builtIn = listOf(FeedSelection.Home, FeedSelection.Reddit.POPULAR, FeedSelection.Reddit.ALL)
         submitList(
-            listOf(Item(null, selectedId == null)) +
-                    feeds.map { Item(it, it.feed.id == selectedId) }
+            builtIn.map { Item(it, null, it == selected) } +
+                    feeds.map {
+                        val selection = FeedSelection.Custom(it.feed.id)
+                        Item(selection, it, selection == selected)
+                    }
         )
     }
 
@@ -46,17 +54,30 @@ class FeedAdapter(
                 feedIcon.isVisible = feed == null
                 feedAvatar.isVisible = feed != null
 
-                if (feed == null) {
-                    feedIcon.setImageResource(R.drawable.ic_home)
-                    feedName.setText(R.string.feed_home)
-                    feedInfo.setText(R.string.feed_home_info)
-                } else {
-                    feedAvatar.setText(feed.feed.name)
-                    feedName.text = feed.feed.name
-                    feedInfo.text = if (feed.subreddits.isEmpty()) {
-                        context.getString(R.string.feed_empty)
-                    } else {
-                        feed.names.joinToString(", ")
+                when (item.selection) {
+                    FeedSelection.Home -> {
+                        feedIcon.setImageResource(R.drawable.ic_home)
+                        feedName.setText(R.string.feed_home)
+                        feedInfo.setText(R.string.feed_home_info)
+                    }
+                    FeedSelection.Reddit.POPULAR -> {
+                        feedIcon.setImageResource(R.drawable.ic_trending)
+                        feedName.setText(R.string.feed_popular)
+                        feedInfo.setText(R.string.feed_popular_info)
+                    }
+                    FeedSelection.Reddit.ALL -> {
+                        feedIcon.setImageResource(R.drawable.ic_globe)
+                        feedName.setText(R.string.feed_all)
+                        feedInfo.setText(R.string.feed_all_info)
+                    }
+                    is FeedSelection.Custom -> if (feed != null) {
+                        feedAvatar.setText(feed.feed.name)
+                        feedName.text = feed.feed.name
+                        feedInfo.text = if (feed.subreddits.isEmpty()) {
+                            context.getString(R.string.feed_empty)
+                        } else {
+                            feed.names.joinToString(", ")
+                        }
                     }
                 }
 
@@ -66,7 +87,7 @@ class FeedAdapter(
                     0
                 }
 
-                cardFeed.setOnClickListener { onClick(feed) }
+                cardFeed.setOnClickListener { onClick(item.selection) }
                 cardFeed.setOnLongClickListener {
                     feed?.let { onLongClick(it) }
                     feed != null
@@ -78,7 +99,7 @@ class FeedAdapter(
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<Item>() {
             override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
-                return oldItem.feed?.feed?.id == newItem.feed?.feed?.id
+                return oldItem.selection == newItem.selection
             }
 
             override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {

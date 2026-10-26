@@ -114,4 +114,8 @@
     <string name="preference_post_layout">Diseño de las publicaciones</string>
     <string name="preference_post_layout_card">Tarjetas</string>
     <string name="preference_post_layout_compact">Compacto</string>
+    <string name="feed_popular">Popular</string>
+    <string name="feed_popular_info">r/popular</string>
+    <string name="feed_all">Todo</string>
+    <string name="feed_all_info">r/all</string>
 </resources>

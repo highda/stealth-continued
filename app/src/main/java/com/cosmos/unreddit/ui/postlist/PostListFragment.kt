@@ -189,7 +189,7 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
             }
 
             launch {
-                combine(viewModel.feeds, viewModel.selectedFeedId) { feeds, selected ->
+                combine(viewModel.feeds, viewModel.selection) { feeds, selected ->
                     feeds to selected
                 }.collect { (feeds, selected) ->
                     feedAdapter.submit(feeds, selected)
@@ -197,12 +197,18 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
             }
 
             launch {
+                // Emits once per selection (and on feed changes), after the feed is loaded
                 viewModel.selectedFeed.collect { feed ->
-                    if (feed == null && viewModel.selectedFeedId.value != null) {
+                    val selection = viewModel.selection.value
+                    if (selection is FeedSelection.Custom && feed == null) {
                         // The selected feed was deleted
-                        viewModel.selectFeed(null)
+                        viewModel.select(FeedSelection.Home)
                     }
-                    binding.appBar.title.text = feed?.feed?.name ?: getString(R.string.app_name)
+                    binding.appBar.title.text = when (selection) {
+                        FeedSelection.Reddit.POPULAR -> getString(R.string.feed_popular)
+                        FeedSelection.Reddit.ALL -> getString(R.string.feed_all)
+                        else -> feed?.feed?.name ?: getString(R.string.app_name)
+                    }
                     binding.textEmptyFeed.isVisible = feed != null && feed.subreddits.isEmpty()
                 }
             }
@@ -242,7 +248,7 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
         }
 
         feedAdapter = FeedAdapter(
-            onClick = { onFeedClick(it?.feed?.id) },
+            onClick = { onFeedClick(it) },
             onLongClick = { FeedEditDialogFragment.show(childFragmentManager, it.feed.id) }
         )
 
@@ -329,7 +335,7 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
         ) { _, bundle ->
             // Show a feed right after creating or editing it
             if (bundle.containsKey(FeedEditDialogFragment.KEY_FEED_ID)) {
-                onFeedClick(bundle.getInt(FeedEditDialogFragment.KEY_FEED_ID))
+                onFeedClick(FeedSelection.Custom(bundle.getInt(FeedEditDialogFragment.KEY_FEED_ID)))
             }
         }
 
@@ -369,8 +375,8 @@ class PostListFragment : BaseFragment(), PullToRefreshLayout.OnRefreshListener {
         binding.drawerLayout.closeDrawer(GravityCompat.START)
     }
 
-    private fun onFeedClick(feedId: Int?) {
-        viewModel.selectFeed(feedId)
+    private fun onFeedClick(selection: FeedSelection) {
+        viewModel.select(selection)
         closeProfileDrawer()
         binding.appBarLayout.setExpanded(true)
     }
