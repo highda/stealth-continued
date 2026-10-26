@@ -1,3 +1,16 @@
+# 2.6.0 - 2026/10/26
+
+### Added
+- Post layout setting (Preferences > UI): Card or Compact, applied to open lists without a
+  restart
+
+### Changed
+- Card layout (default) in the style of the Reddit app: posts edge to edge with a thin divider,
+  one header line (subreddit, author, age), bold titles, full-width media, one compact action
+  row. About twice as many posts per screen as before
+- Compact layout: small thumbnails on the right, one line of stats, about six posts per screen
+- Post screen: less padding around the post, the same style as the Card layout
+
 # 2.5.0 - 2026/10/24
 
 ### Added

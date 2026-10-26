@@ -24,6 +24,9 @@ hood it talks to one server only: a Teddit API instance you choose, such as
 - **No more "Stealth might stop working" banner** or Reddit API policy dialog.
 - **Hidden NSFW content is announced.** With "Show NSFW content" off, a list or search that
   drops NSFW items says so, with a button to show them.
+- **Denser, Reddit-like feeds.** A Card layout in the style of the Reddit app (edge to edge,
+  one header line, full-width media) and a Compact layout with thumbnails, switchable in
+  Preferences > UI > Post layout.
 - The status bar stays opaque on Android 15+ (content used to scroll visibly under it).
 - Gfycat (shut down in 2023) links open as plain links.
 - Changing the instance applies immediately, without a restart.
@@ -66,6 +69,7 @@ per comment for top-level comments, 8 per tap) and user search looks up the exac
 - Image flairs
 - Awards
 - Save photos and videos
+- Card and Compact post layouts
 - Light/Dark theme
 
 ## Building

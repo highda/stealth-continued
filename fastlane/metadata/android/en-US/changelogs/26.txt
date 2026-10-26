@@ -1,0 +1,2 @@
+- New post layouts: Card (in the style of the Reddit app) and Compact, in Preferences > UI
+- Much less empty space in feeds and on the post screen
