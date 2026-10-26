@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.HorizontalScrollView
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.children
@@ -109,11 +110,11 @@ class RedditView @JvmOverloads constructor(
         onLinkClickListener?.onLinkLongClick(link)
     }
 
-    override fun onClick() {
+    override fun onClick(widget: TextView) {
         performClick()
     }
 
-    override fun onLongClick() {
+    override fun onLongClick(widget: TextView) {
         performLongClick()
     }
 }

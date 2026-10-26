@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.recyclerview.widget.RecyclerView
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.size.Precision
@@ -155,3 +156,13 @@ fun View.showWithAlpha(show: Boolean, duration: Long) {
 
 val Int.asBoolean: Boolean
     get() = this == View.VISIBLE
+
+/** The RecyclerView item this view is part of, if any. */
+fun View.listRow(): View? {
+    var view: View = this
+    while (true) {
+        val parent = view.parent as? View ?: return null
+        if (parent is RecyclerView) return view
+        view = parent
+    }
+}

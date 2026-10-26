@@ -243,11 +243,9 @@ abstract class PostViewHolder(
     ) {
 
         init {
+            // No listeners of its own: they would keep the row from getting taps
+            // on plain text. Text with links passes them on through the movement method.
             binding.textPostSelf.movementMethod = clickableMovementMethod
-            binding.textPostSelf.setOnLongClickListener {
-                listener.onClick(bindingAdapterPosition, true)
-                true
-            }
         }
 
         override fun bind(

@@ -1,6 +1,7 @@
 package com.cosmos.unreddit.ui.postlist
 
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ import com.cosmos.unreddit.data.model.preferences.UiPreferences.PostLayout
 import com.cosmos.unreddit.data.repository.PostListRepository
 import com.cosmos.unreddit.ui.common.widget.RedditView
 import com.cosmos.unreddit.util.ClickableMovementMethod
+import com.cosmos.unreddit.util.extension.listRow
 
 class PostListAdapter(
     private val repository: PostListRepository,
@@ -54,12 +56,13 @@ class PostListAdapter(
                 onLinkClickListener?.onLinkLongClick(link)
             }
 
-            override fun onClick() {
-                // ignore
+            override fun onClick(widget: TextView) {
+                // The text preview takes the row's taps outside links: open the post
+                widget.listRow()?.performClick()
             }
 
-            override fun onLongClick() {
-                // ignore
+            override fun onLongClick(widget: TextView) {
+                widget.listRow()?.performLongClick()
             }
         }
     )

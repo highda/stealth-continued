@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -22,6 +23,7 @@ import com.cosmos.unreddit.ui.postlist.PostListAdapter
 import com.cosmos.unreddit.ui.postlist.PostViewHolder
 import com.cosmos.unreddit.ui.user.UserCommentsAdapter
 import com.cosmos.unreddit.util.ClickableMovementMethod
+import com.cosmos.unreddit.util.extension.listRow
 import com.cosmos.unreddit.util.DateUtil
 import com.cosmos.unreddit.util.extension.blurText
 
@@ -46,12 +48,13 @@ class ProfileSavedAdapter(
                 onLinkClickListener?.onLinkLongClick(link)
             }
 
-            override fun onClick() {
-                // ignore
+            override fun onClick(widget: TextView) {
+                // The text preview takes the row's taps outside links: open the post
+                widget.listRow()?.performClick()
             }
 
-            override fun onLongClick() {
-                // ignore
+            override fun onLongClick(widget: TextView) {
+                widget.listRow()?.performLongClick()
             }
         }
     )

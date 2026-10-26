@@ -20,9 +20,10 @@ class ClickableMovementMethod(
 
         fun onLinkLongClick(link: String)
 
-        fun onClick()
+        /** A tap outside links and spoilers, on [widget]. */
+        fun onClick(widget: TextView)
 
-        fun onLongClick()
+        fun onLongClick(widget: TextView)
     }
 
     private val longClickHandler = Handler(Looper.getMainLooper())
@@ -80,7 +81,7 @@ class ClickableMovementMethod(
                         longClickHandler.postDelayed(
                             ViewConfiguration.getLongPressTimeout().toLong()
                         ) {
-                            clickListener.onLongClick()
+                            clickListener.onLongClick(widget)
                             longClicked = true
                         }
                     }
@@ -88,7 +89,7 @@ class ClickableMovementMethod(
                         longClickHandler.removeCallbacksAndMessages(null)
 
                         if (!longClicked) {
-                            clickListener.onClick()
+                            clickListener.onClick(widget)
                         }
 
                         longClicked = false
