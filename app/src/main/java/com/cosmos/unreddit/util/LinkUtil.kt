@@ -53,8 +53,16 @@ object LinkUtil {
         return link.replace(GIF_REGEX, "mp4")
     }
 
-    fun getRedditSoundTrack(link: String): String {
-        return link.replace(REDDIT_VIDEO_REGEX, REDDIT_SOUNDTRACK_NAME)
+    /**
+     * The separate sound track of a DASH video, or null for other videos: muxed MP4s, which
+     * have their sound with them, would otherwise be fetched a second time as their own track.
+     */
+    fun getRedditSoundTrack(link: String): String? {
+        return if (REDDIT_VIDEO_REGEX.containsMatchIn(link)) {
+            link.replace(REDDIT_VIDEO_REGEX, REDDIT_SOUNDTRACK_NAME)
+        } else {
+            null
+        }
     }
 
     fun isRedditSoundTrack(link: String): Boolean {
