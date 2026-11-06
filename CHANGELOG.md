@@ -1,3 +1,9 @@
+# 2.7.1 - 2026/11/06
+
+### Fixed
+- Videos from feeds that redlib-tor-api serves through GraphQL (sorted by new, All, search)
+  were downloaded twice through Tor
+
 # 2.7.0 - 2026/10/26
 
 ### Added
